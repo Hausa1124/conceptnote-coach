@@ -1,6 +1,57 @@
 import React from 'react'
+import { useState } from 'react'
 
 function App() {
+  // State for email generation functionality
+  const [email, setEmail] = useState("");
+  const [requesting, setRequesting] = useState(false);
+  const [draft, setDraft] = useState<string | null>(null);
+
+  const isEmailValid = (v: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+
+  // Build payload from form data (placeholder for now)
+  const buildPayload = () => {
+    return {
+      project_title: "Sample Project", // This would come from form state
+      project_description: "Sample description", // This would come from form state
+      // Add other form fields as needed
+    };
+  };
+
+  // Handle generate function
+  async function handleGenerate() {
+    if (!isEmailValid(email)) return;
+    setRequesting(true);
+    try {
+      const payload = buildPayload();
+      payload.email = email.trim();
+      const res = await fetch("/.netlify/functions/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const text = await res.text();
+      if (!res.ok) throw new Error(text || `HTTP ${res.status}`);
+
+      const data = JSON.parse(text);
+      setDraft(data.full_draft);
+
+      // instant download (txt)
+      const blob = new Blob([data.full_draft], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${payload.project_title || "concept-note"}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e: any) {
+      alert(e.message || "Generation failed");
+    } finally {
+      setRequesting(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="background-animation"></div>
@@ -42,8 +93,27 @@ function App() {
             </div>
 
             <div className="button-group">
-              <button className="btn btn-secondary">Previous</button>
-              <button className="btn btn-primary">Next Step</button>
+              <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+                <input
+                  type="email"
+                  placeholder="Enter email for instant download"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full md:w-80 rounded-lg px-3 py-2 bg-slate-800 text-white border border-slate-700"
+                />
+                <button
+                  onClick={handleGenerate}
+                  disabled={!isEmailValid(email) || requesting}
+                  className={`px-4 py-2 rounded-lg font-semibold
+                    ${!isEmailValid(email) || requesting ? "opacity-50 cursor-not-allowed" : "bg-indigo-500 hover:bg-indigo-600 text-white"}`}
+                >
+                  {requesting ? "Generating…" : "Generate Analysis"}
+                </button>
+              </div>
+              <div className="flex gap-4 mt-4">
+                <button className="btn btn-secondary">Previous</button>
+                <button className="btn btn-primary">Next Step</button>
+              </div>
             </div>
           </div>
         </div>
@@ -63,6 +133,15 @@ function App() {
               </div>
             </div>
           </div>
+
+          {draft && (
+            <div className="mt-6">
+              <div className="section-header">Generated Analysis</div>
+              <pre className="mt-6 whitespace-pre-wrap leading-7 text-slate-100 bg-slate-800 p-4 rounded-lg border border-slate-700">
+                {draft}
+              </pre>
+            </div>
+          )}
         </div>
       </div>
     </div>
