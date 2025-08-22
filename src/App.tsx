@@ -1,4 +1,3 @@
-import React from 'react'
 import { useState } from 'react'
 
 function App() {
@@ -15,6 +14,7 @@ function App() {
     return {
       project_title: "Sample Project", // This would come from form state
       project_description: "Sample description", // This would come from form state
+      email: "", // Will be overwritten by handleGenerate
       // Add other form fields as needed
     };
   };
