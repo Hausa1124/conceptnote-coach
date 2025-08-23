@@ -425,22 +425,25 @@ const Step4: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
-  // derive current selections from data.risks
-  const selectedRisks = new Set(
-    (data.risks || "").split("\n").map((s) => s.trim()).filter(Boolean)
-  );
+  // Current selections as array & set
+  const selectedList: string[] = (data.risks || "")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const selectedSet = new Set<string>(selectedList);
+  const commonRisks: string[] = [...ex.commonRisks];
 
-  // toggle helper for common risks
+  // Toggle helper for common risks
   const toggleRisk = (r: string) => {
-    const next = new Set(selectedRisks);
+    const next = new Set<string>(selectedSet);
     if (next.has(r)) next.delete(r);
     else next.add(r);
-    setData(d => ({ ...d, risks: Array.from(next).join("\n") }));
+    setData((d) => ({ ...d, risks: Array.from(next).join("\n") }));
   };
-  
-  // text shown in the "Other Risks" textbox (only non-common)
-  const otherRisksText: string = Array.from(selectedRisks)
-    .filter((r) => !ex.commonRisks.includes(r))
+
+  // Only non-common risks shown in the textbox
+  const otherRisksText: string = selectedList
+    .filter((r) => !commonRisks.includes(r))
     .join("\n");
 
   const canSubmit = data.acknowledgeProtocols;
@@ -452,7 +455,7 @@ const Step4: React.FC = () => {
       const res = await fetch("/.netlify/functions/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data })
+        body: JSON.stringify({ ...data }),
       });
       const text = await res.text();
       let analysis = "";
@@ -462,7 +465,7 @@ const Step4: React.FC = () => {
       } catch {
         analysis = text;
       }
-      setData(d => ({ ...d, analysisText: analysis }));
+      setData((d) => ({ ...d, analysisText: analysis }));
       nav("/results");
     } catch (e: any) {
       setError(e?.message || "Submission failed.");
@@ -476,11 +479,11 @@ const Step4: React.FC = () => {
       <Section title="Risk Register (select all that apply)">
         <div className="card">
           <div className="grid2">
-            {ex.commonRisks.map((r) => (
+            {commonRisks.map((r) => (
               <Checkbox
                 key={r}
                 label={r}
-                checked={selectedRisks.has(r)}
+                checked={selectedSet.has(r)}
                 onChange={() => toggleRisk(r)}
               />
             ))}
@@ -490,9 +493,12 @@ const Step4: React.FC = () => {
             label="Other Risks (one per line)"
             value={otherRisksText}
             onChange={(v) => {
-              const customs: string[] = v.split("\n").map((s) => s.trim()).filter(Boolean);
-              const base: string[] = ex.commonRisks.filter((r) => selectedRisks.has(r));
-              setData(d => ({ ...d, risks: [...base, ...customs].join("\n") }));
+              const customs: string[] = v
+                .split("\n")
+                .map((s) => s.trim())
+                .filter(Boolean);
+              const base: string[] = commonRisks.filter((r) => selectedSet.has(r));
+              setData((d) => ({ ...d, risks: [...base, ...customs].join("\n") }));
             }}
             placeholder="Add any additional risks…"
           />
@@ -503,7 +509,7 @@ const Step4: React.FC = () => {
         <Input
           label="Email for results"
           value={data.email}
-          onChange={(v) => setData(d => ({ ...d, email: v }))}
+          onChange={(v) => setData((d) => ({ ...d, email: v }))}
           placeholder="you@example.com"
           type="email"
         />
@@ -511,18 +517,18 @@ const Step4: React.FC = () => {
           <Checkbox
             label="Share learnings anonymously to improve the tool"
             checked={data.shareAnon}
-            onChange={(v) => setData(d => ({ ...d, shareAnon: v }))}
+            onChange={(v) => setData((d) => ({ ...d, shareAnon: v }))}
           />
           <Checkbox
             label="Ghost Mode (hide donor hints)"
             checked={data.ghostMode}
-            onChange={(v) => setData(d => ({ ...d, ghostMode: v }))}
+            onChange={(v) => setData((d) => ({ ...d, ghostMode: v }))}
           />
         </div>
         <Checkbox
           label="I acknowledge data handling and consent protocols."
           checked={data.acknowledgeProtocols}
-          onChange={(v) => setData(d => ({ ...d, acknowledgeProtocols: v }))}
+          onChange={(v) => setData((d) => ({ ...d, acknowledgeProtocols: v }))}
           note="Required to submit."
         />
       </Section>
