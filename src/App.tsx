@@ -370,6 +370,9 @@ const Step2: React.FC = () => {
         <HelperText text={ex.problemNudge} />
       </Section>
 
-      <Section title="Project Objectives">
-        <ExampleCard title="EXAMPLE SMART OBJECTIVES" items={ex.objectivesExample} />
-        <TextArea label="Objectives" value={data.objectives} onChange={(v) => setData(d => ({ ...d, objectives: v }))} placeho
+     <TextArea
+  label="Objectives"
+  value={data.objectives}
+  onChange={(v) => setData(d => ({ ...d, objectives: v }))}
+  placeholder="Write your objectives…"
+/>
