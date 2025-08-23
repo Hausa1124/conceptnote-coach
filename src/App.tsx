@@ -153,6 +153,13 @@ const examplesBySector = {
   },
 } as const;
 
+/* ---------- Type-safe key picker to avoid TS2352 ---------- */
+type SectorKey = keyof typeof examplesBySector;
+function pickSector(key: string): SectorKey {
+  const allowed = Object.keys(examplesBySector) as SectorKey[];
+  return allowed.includes(key as SectorKey) ? (key as SectorKey) : "Economic Development";
+}
+
 /* ---------- Context ---------- */
 const WizardCtx = createContext<{
   data: WizardData;
@@ -353,10 +360,7 @@ const Step1: React.FC = () => {
 const Step2: React.FC = () => {
   const { data, setData } = useWizard();
   const nav = useNavigate();
-  const ex =
-    (examplesBySector as Record<string, typeof examplesBySector["Economic Development"]>)[
-      data.sector as string
-    ] ?? examplesBySector["Economic Development"];
+  const ex = examplesBySector[pickSector(data.sector)];
 
   return (
     <Frame stepIndex={1} total={4} title="Problem Statement" preview={<IntelligencePreview />}>
@@ -379,10 +383,7 @@ const Step2: React.FC = () => {
 const Step3: React.FC = () => {
   const { data, setData } = useWizard();
   const nav = useNavigate();
-  const ex =
-    (examplesBySector as Record<string, typeof examplesBySector["Economic Development"]>)[
-      data.sector as string
-    ] ?? examplesBySector["Economic Development"];
+  const ex = examplesBySector[pickSector(data.sector)];
 
   return (
     <Frame stepIndex={2} total={4} title="Implementation Plan" preview={<IntelligencePreview />}>
@@ -416,10 +417,7 @@ const Step3: React.FC = () => {
 const Step4: React.FC = () => {
   const { data, setData } = useWizard();
   const nav = useNavigate();
-  const ex =
-    (examplesBySector as Record<string, typeof examplesBySector["Economic Development"]>)[
-      data.sector as string
-    ] ?? examplesBySector["Economic Development"];
+  const ex = examplesBySector[pickSector(data.sector)];
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
