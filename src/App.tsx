@@ -1,4 +1,4 @@
-// App.tsx — Bavarios‑Exact UI (two‑pane, examples, live preview)
+// App.tsx — Bavarios-Exact UI (two-pane, examples, live preview)
 import React, { createContext, useContext, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 
@@ -81,7 +81,7 @@ const examplesBySector = {
     ],
     beneficiariesNudge: "Be specific about who, how many, and key demographics",
     beneficiariesExample: [
-      "300 low‑income households (70% women‑led) in peri‑urban areas; focus on micro‑entrepreneurs and informal sector workers.",
+      "300 low-income households (70% women-led) in peri-urban areas; focus on micro-entrepreneurs and informal sector workers.",
     ],
     activitiesNudge: "4–6 concrete activities that will achieve your objectives",
     activitiesExample: [
@@ -93,7 +93,7 @@ const examplesBySector = {
       "Household income increases by 35% on average",
       "200 entrepreneurs complete business training",
       "10 savings groups mobilize $50,000 in community savings",
-      "150 new micro‑enterprises established",
+      "150 new micro-enterprises established",
     ],
     commonRisks: [
       "Price/Market Volatility",
@@ -106,11 +106,11 @@ const examplesBySector = {
   Agriculture: {
     problemNudge: "150–200 words on yields, inputs, extension services, shocks",
     problemExample: [
-      "Pineapple yields remain low due to poor planting material and limited access to agronomic training; post‑harvest loss >30%.",
+      "Pineapple yields remain low due to poor planting material and limited access to agronomic training; post-harvest loss >30%.",
     ],
     objectivesExample: [
       "Improve average yield by 25% within 18 months",
-      "Reduce post‑harvest losses to <10% via collective processing",
+      "Reduce post-harvest losses to <10% via collective processing",
       "Train 300 farmers on GAP and quality standards",
     ],
     beneficiariesNudge: "Who farms, where, how many, gender/age mix",
@@ -125,7 +125,7 @@ const examplesBySector = {
     ],
     resultsExample: [
       "Average yield rises from 12t/ha to 15t/ha",
-      "Post‑harvest loss reduced to 8%",
+      "Post-harvest loss reduced to 8%",
       "2 functioning aggregation centers established",
     ],
     commonRisks: [
@@ -152,8 +152,6 @@ const examplesBySector = {
     commonRisks: ["Stockouts", "Staff turnover", "Misinformation"],
   },
 } as const;
-
-type SectorKey = keyof typeof examplesBySector;
 
 // ---------- Context ----------
 const WizardCtx = createContext<{
@@ -343,7 +341,6 @@ const Step1: React.FC = () => {
 const Step2: React.FC = () => {
   const { data, setData } = useWizard();
   const nav = useNavigate();
-  // SAFE FALLBACK for sectors without examples
   const ex =
     (examplesBySector as Record<string, typeof examplesBySector["Economic Development"]>)[
       data.sector as string
@@ -370,7 +367,6 @@ const Step2: React.FC = () => {
 const Step3: React.FC = () => {
   const { data, setData } = useWizard();
   const nav = useNavigate();
-  // SAFE FALLBACK for sectors without examples
   const ex =
     (examplesBySector as Record<string, typeof examplesBySector["Economic Development"]>)[
       data.sector as string
@@ -402,7 +398,6 @@ const Step3: React.FC = () => {
 const Step4: React.FC = () => {
   const { data, setData } = useWizard();
   const nav = useNavigate();
-  // SAFE FALLBACK for sectors without examples
   const ex =
     (examplesBySector as Record<string, typeof examplesBySector["Economic Development"]>)[
       data.sector as string
@@ -426,112 +421,4 @@ const Step4: React.FC = () => {
       catch { analysis = text; }
       setData(d => ({ ...d, analysisText: analysis }));
       nav("/results");
-    } catch (e: any) {
-      setError(e?.message || "Submit failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <Frame stepIndex={3} total={4} title="Risk & Resources" preview={<IntelligencePreview />}>
-      <Section title="Common Project Risks">
-        <div className="grid2">
-          {ex.commonRisks.map((r) => (
-            <Checkbox
-              key={r}
-              label={r}
-              checked={data.risks.includes(r)}
-              onChange={(v) => {
-                setData(d => ({
-                  ...d,
-                  risks: v
-                    ? (d.risks ? `${d.risks}\n${r}` : r)
-                    : (d.risks || "").split("\n").filter((x) => x !== r).join("\n")
-                }));
-              }}
-            />
-          ))}
-        </div>
-      </Section>
-
-      <Section title="Additional Risks">
-        <TextArea label="Add any specific risks not covered above…" value={data.risks} onChange={(v) => setData(d => ({ ...d, risks: v }))} />
-      </Section>
-
-      <Section title="Email & Protocols">
-        <Input label="Your Email" value={data.email} onChange={(v) => setData(d => ({ ...d, email: v }))} placeholder="your@email.com" type="email" />
-        <Checkbox label="Share anonymized data for intelligence enhancement" checked={data.shareAnon} onChange={(v) => setData(d => ({ ...d, shareAnon: v }))} />
-        <Checkbox label="Activate ghost mode: zero data retention" checked={data.ghostMode} onChange={(v) => setData(d => ({ ...d, ghostMode: v }))} />
-        <Checkbox
-          label="Acknowledge operational protocols"
-          checked={data.acknowledgeProtocols}
-          onChange={(v) => setData(d => ({ ...d, acknowledgeProtocols: v }))}
-          note={!data.acknowledgeProtocols ? "Required: Must acknowledge protocols to proceed" : undefined}
-        />
-        <div className="security">
-          Security Notice: Data processed through encrypted channels. Ghost mode ensures zero‑trace operations. Intelligence never used for external training protocols.
-        </div>
-      </Section>
-
-      {error && <div className="error">{error}</div>}
-
-      <div className="navrow">
-        <button className="btn ghost" onClick={() => nav("/step-3")}>Previous</button>
-        <button className="btn primary" onClick={handleSubmit} disabled={!canSubmit || loading}>
-          {loading ? "Generating…" : "⚡ Generate Intelligence"}
-        </button>
-      </div>
-    </Frame>
-  );
-};
-
-const Results: React.FC = () => {
-  const { data } = useWizard();
-  const nav = useNavigate();
-  return (
-    <div className="app-root">
-      <header className="app-top">
-        <div className="brand">◎ Concept Note Coach</div>
-        <div />
-        <div className="secure">Secure Mode</div>
-      </header>
-      <div className="results">
-        <h2>Results</h2>
-        {data.analysisText ? (
-          <pre className="analysis">{data.analysisText}</pre>
-        ) : (
-          <div className="helper">No analysis yet. Please go back and submit.</div>
-        )}
-        <div className="navrow">
-          <button className="btn ghost" onClick={() => nav("/")}>Back to Start</button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ---------- App Shell ----------
-const AppInner: React.FC = () => {
-  const [data, setData] = useState<WizardData>(defaultData);
-  return (
-    <WizardCtx.Provider value={{ data, setData }}>
-      <Routes>
-        <Route path="/" element={<Step1 />} />
-        <Route path="/step-1" element={<Step1 />} />
-        <Route path="/step-2" element={<Step2 />} />
-        <Route path="/step-3" element={<Step3 />} />
-        <Route path="/step-4" element={<Step4 />} />
-        <Route path="/results" element={<Results />} />
-      </Routes>
-    </WizardCtx.Provider>
-  );
-};
-
-export default function App() {
-  return (
-    <Router>
-      <AppInner />
-    </Router>
-  );
-}
+    } catch (e: any)
