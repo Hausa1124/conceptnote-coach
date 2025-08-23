@@ -436,6 +436,9 @@ const Step4: React.FC = () => {
     setData(d => ({ ...d, risks: Array.from(next).join("\n") }));
   };
 
+  // Compute custom/other risks without a type predicate
+  const otherRisks: string[] = Array.from(selectedRisks).filter((r) => !ex.commonRisks.includes(r));
+
   const canSubmit = data.acknowledgeProtocols;
 
   const handleSubmit = async () => {
@@ -480,9 +483,7 @@ const Step4: React.FC = () => {
           </div>
           <TextArea
             label="Other Risks (one per line)"
-            value={Array.from(
-              Array.from(selectedRisks).filter((r): r is string => !ex.commonRisks.includes(r))
-            ).join("\n")}
+            value={otherRisks.join("\n")}
             onChange={(v) => {
               const customs: string[] = v.split("\n").map((s) => s.trim()).filter(Boolean);
               const base: string[] = ex.commonRisks.filter((r) => selectedRisks.has(r));
@@ -507,12 +508,12 @@ const Step4: React.FC = () => {
             checked={data.shareAnon}
             onChange={(v) => setData(d => ({ ...d, shareAnon: v }))}
           />
-          <Checkbox
-            label="Ghost Mode (hide donor hints)"
-            checked={data.ghostMode}
-            onChange={(v) => setData(d => ({ ...d, ghostMode: v }))}
-          />
         </div>
+        <Checkbox
+          label="Ghost Mode (hide donor hints)"
+          checked={data.ghostMode}
+          onChange={(v) => setData(d => ({ ...d, ghostMode: v }))}
+        />
         <Checkbox
           label="I acknowledge data handling and consent protocols."
           checked={data.acknowledgeProtocols}
