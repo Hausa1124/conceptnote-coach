@@ -153,7 +153,7 @@ const examplesBySector = {
   },
 } as const;
 
-/* ---------- Type-safe key picker to avoid undefined ---------- */
+/* ---------- Type-safe key picker ---------- */
 type SectorKey = keyof typeof examplesBySector;
 function pickSector(key: string): SectorKey {
   const allowed = Object.keys(examplesBySector) as SectorKey[];
@@ -425,10 +425,12 @@ const Step4: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
+  // derive current selections from data.risks
   const selectedRisks = new Set(
     (data.risks || "").split("\n").map((s) => s.trim()).filter(Boolean)
   );
 
+  // toggle helper for common risks
   const toggleRisk = (r: string) => {
     const next = new Set(selectedRisks);
     if (next.has(r)) next.delete(r);
@@ -436,8 +438,10 @@ const Step4: React.FC = () => {
     setData(d => ({ ...d, risks: Array.from(next).join("\n") }));
   };
 
-  // Compute custom/other risks without a type predicate
-  const otherRisks: string[] = Array.from(selectedRisks).filter((r) => !ex.commonRisks.includes(r));
+  // text shown in the "Other Risks" textbox (only non-common)
+  const otherRisksText: string = Array.from(selectedRisks)
+    .filter((r) => !ex.commonRisks.includes(r))
+    .join("\n");
 
   const canSubmit = data.acknowledgeProtocols;
 
@@ -481,9 +485,10 @@ const Step4: React.FC = () => {
               />
             ))}
           </div>
+
           <TextArea
             label="Other Risks (one per line)"
-            value={otherRisks.join("\n")}
+            value={otherRisksText}
             onChange={(v) => {
               const customs: string[] = v.split("\n").map((s) => s.trim()).filter(Boolean);
               const base: string[] = ex.commonRisks.filter((r) => selectedRisks.has(r));
@@ -508,12 +513,12 @@ const Step4: React.FC = () => {
             checked={data.shareAnon}
             onChange={(v) => setData(d => ({ ...d, shareAnon: v }))}
           />
+          <Checkbox
+            label="Ghost Mode (hide donor hints)"
+            checked={data.ghostMode}
+            onChange={(v) => setData(d => ({ ...d, ghostMode: v }))}
+          />
         </div>
-        <Checkbox
-          label="Ghost Mode (hide donor hints)"
-          checked={data.ghostMode}
-          onChange={(v) => setData(d => ({ ...d, ghostMode: v }))}
-        />
         <Checkbox
           label="I acknowledge data handling and consent protocols."
           checked={data.acknowledgeProtocols}
