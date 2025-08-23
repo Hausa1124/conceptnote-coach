@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 
-// ---------- Types ----------
+/* ---------- Types ---------- */
 export type WizardData = {
   // Step 1 — Basics
   title: string;
@@ -67,7 +67,7 @@ const defaultData: WizardData = {
   analysisText: "",
 };
 
-// ---------- Examples by Sector (cards + nudges) ----------
+/* ---------- Examples by Sector (cards + nudges) ---------- */
 const examplesBySector = {
   "Economic Development": {
     problemNudge: "150–200 words describing the situation and challenges",
@@ -153,14 +153,15 @@ const examplesBySector = {
   },
 } as const;
 
-// ---------- Context ----------
+/* ---------- Context ---------- */
 const WizardCtx = createContext<{
   data: WizardData;
   setData: React.Dispatch<React.SetStateAction<WizardData>>;
 }>({ data: defaultData, setData: () => {} });
+
 const useWizard = () => useContext(WizardCtx);
 
-// ---------- Layout ----------
+/* ---------- Reusable UI ---------- */
 const Frame: React.FC<{
   stepIndex: number;
   total: number;
@@ -217,7 +218,14 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
   </div>
 );
 
-// ---------- Intelligence Preview (right pane) ----------
+const FieldRead: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div className="read">
+    <div className="read-label">{label}</div>
+    <div className="read-value">{value}</div>
+  </div>
+);
+
+/* ---------- Intelligence Preview (right pane) ---------- */
 const IntelligencePreview: React.FC = () => {
   const { data } = useWizard();
   return (
@@ -238,20 +246,19 @@ const IntelligencePreview: React.FC = () => {
   );
 };
 
-const FieldRead: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div className="read">
-    <div className="read-label">{label}</div>
-    <div className="read-value">{value}</div>
-  </div>
-);
-
-// ---------- Inputs ----------
+/* ---------- Inputs ---------- */
 const Input: React.FC<{
   label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string;
 }> = ({ label, value, onChange, placeholder, type = "text" }) => (
   <label className="field">
     <div className="label">{label}</div>
-    <input className="input" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} type={type} />
+    <input
+      className="input"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      type={type}
+    />
   </label>
 );
 
@@ -259,7 +266,12 @@ const TextArea: React.FC<{ label: string; value: string; onChange: (v: string) =
 ({ label, value, onChange, placeholder }) => (
   <label className="field">
     <div className="label">{label}</div>
-    <textarea className="textarea" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
+    <textarea
+      className="textarea"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+    />
   </label>
 );
 
@@ -298,7 +310,7 @@ const NavRow: React.FC<{ onPrev?: () => void; onNext?: () => void; nextLabel?: s
   </div>
 );
 
-// ---------- Steps ----------
+/* ---------- Steps ---------- */
 const Step1: React.FC = () => {
   const { data, setData } = useWizard();
   const nav = useNavigate();
@@ -306,7 +318,7 @@ const Step1: React.FC = () => {
     <Frame stepIndex={0} total={4} title="Basics" preview={<IntelligencePreview />}>
       <Section title="Project Basics">
         <Input label="Concept Title" value={data.title} onChange={(v) => setData(d => ({ ...d, title: v }))} placeholder="e.g., Pineapple Passion" />
-        <Input label="Country/Region" value={data.countryRegion} onChange={(v) => setData(d => ({ ...d, countryRegion: v }))} placeholder="rwanda" />
+        <Input label="Country/Region" value={data.countryRegion} onChange={(v) => setData(d => ({ ...d, countryRegion: v }))} placeholder="Rwanda" />
         <Input label="Organization" value={data.organization} onChange={(v) => setData(d => ({ ...d, organization: v }))} />
         <div className="grid2">
           <Input label="Budget (USD)" value={data.budget} onChange={(v) => setData(d => ({ ...d, budget: v }))} />
@@ -388,6 +400,12 @@ const Step3: React.FC = () => {
 
       <Section title="Expected Results">
         <ExampleCard title="EXAMPLE RESULTS" items={ex.resultsExample} />
+        <TextArea
+          label="Expected Results (your draft)"
+          value={data.expectedResults}
+          onChange={(v) => setData(d => ({ ...d, expectedResults: v }))}
+          placeholder="List the measurable outputs/outcomes you expect…"
+        />
       </Section>
 
       <NavRow onPrev={() => nav("/step-2")} onNext={() => nav("/step-4")} />
@@ -403,12 +421,25 @@ const Step4: React.FC = () => {
       data.sector as string
     ] ?? examplesBySector["Economic Development"];
 
-  const canSubmit = data.acknowledgeProtocols;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
+  const selectedRisks = new Set(
+    (data.risks || "").split("\n").map((s) => s.trim()).filter(Boolean)
+  );
+
+  const toggleRisk = (r: string) => {
+    const next = new Set(selectedRisks);
+    if (next.has(r)) next.delete(r);
+    else next.add(r);
+    setData(d => ({ ...d, risks: Array.from(next).join("\n") }));
+  };
+
+  const canSubmit = data.acknowledgeProtocols;
+
   const handleSubmit = async () => {
-    setLoading(true); setError(undefined);
+    setLoading(true);
+    setError(undefined);
     try {
       const res = await fetch("/.netlify/functions/submit", {
         method: "POST",
@@ -417,8 +448,149 @@ const Step4: React.FC = () => {
       });
       const text = await res.text();
       let analysis = "";
-      try { const parsed = JSON.parse(text); analysis = parsed.analysis || parsed.text || text; }
-      catch { analysis = text; }
+      try {
+        const parsed = JSON.parse(text);
+        analysis = (parsed as any).analysis || (parsed as any).text || text;
+      } catch {
+        analysis = text;
+      }
       setData(d => ({ ...d, analysisText: analysis }));
       nav("/results");
-    } catch (e: any)
+    } catch (e: any) {
+      setError(e?.message || "Submission failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Frame stepIndex={3} total={4} title="Finalize & Submit" preview={<IntelligencePreview />}>
+      <Section title="Risk Register (select all that apply)">
+        <div className="card">
+          <div className="grid2">
+            {ex.commonRisks.map((r) => (
+              <Checkbox
+                key={r}
+                label={r}
+                checked={selectedRisks.has(r)}
+                onChange={() => toggleRisk(r)}
+              />
+            ))}
+          </div>
+          <TextArea
+            label="Other Risks (one per line)"
+            value={Array.from(
+              Array.from(selectedRisks).filter((r) => !ex.commonRisks.includes(r))
+            ).join("\n")}
+            onChange={(v) => {
+              const customs = v.split("\n").map((s) => s.trim()).filter(Boolean);
+              const base = ex.commonRisks.filter((r) => selectedRisks.has(r));
+              setData(d => ({ ...d, risks: [...base, ...customs].join("\n") }));
+            }}
+            placeholder="Add any additional risks…"
+          />
+        </div>
+      </Section>
+
+      <Section title="Contact & Protocols">
+        <Input
+          label="Email for results"
+          value={data.email}
+          onChange={(v) => setData(d => ({ ...d, email: v }))}
+          placeholder="you@example.com"
+          type="email"
+        />
+        <div className="grid2">
+          <Checkbox
+            label="Share learnings anonymously to improve the tool"
+            checked={data.shareAnon}
+            onChange={(v) => setData(d => ({ ...d, shareAnon: v }))}
+          />
+          <Checkbox
+            label="Ghost Mode (hide donor hints)"
+            checked={data.ghostMode}
+            onChange={(v) => setData(d => ({ ...d, ghostMode: v }))}
+          />
+        </div>
+        <Checkbox
+          label="I acknowledge data handling and consent protocols."
+          checked={data.acknowledgeProtocols}
+          onChange={(v) => setData(d => ({ ...d, acknowledgeProtocols: v }))}
+          note="Required to submit."
+        />
+      </Section>
+
+      {error && <div className="error">{error}</div>}
+      <NavRow
+        onPrev={() => nav("/step-3")}
+        onNext={handleSubmit}
+        nextLabel={loading ? "Submitting..." : "Submit"}
+        disabledNext={!canSubmit || loading}
+      />
+    </Frame>
+  );
+};
+
+/* ---------- Results Page ---------- */
+const Results: React.FC = () => {
+  const { data } = useWizard();
+  const nav = useNavigate();
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(data.analysisText || "");
+      alert("Copied analysis to clipboard.");
+    } catch {
+      alert("Copy failed.");
+    }
+  };
+
+  return (
+    <div className="app-root">
+      <header className="app-top">
+        <div className="brand">◎ Concept Note Coach</div>
+        <div className="spacer" />
+        <button className="btn ghost" onClick={() => nav("/step-1")}>Start Over</button>
+      </header>
+      <div className="results-wrap">
+        <h2>Analysis Result</h2>
+        <div className="result-box">
+          {data.analysisText ? (
+            <pre className="result-pre">{data.analysisText}</pre>
+          ) : (
+            <div className="helper">No analysis text found. Please submit again.</div>
+          )}
+        </div>
+        <div className="navrow">
+          <button className="btn ghost" onClick={() => nav("/step-4")}>Back</button>
+          <button className="btn primary" onClick={copy}>Copy</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ---------- App Shell + Provider ---------- */
+const WizardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [data, setData] = useState<WizardData>(defaultData);
+  return <WizardCtx.Provider value={{ data, setData }}>{children}</WizardCtx.Provider>;
+};
+
+function App() {
+  return (
+    <WizardProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Step1 />} />
+          <Route path="/step-1" element={<Step1 />} />
+          <Route path="/step-2" element={<Step2 />} />
+          <Route path="/step-3" element={<Step3 />} />
+          <Route path="/step-4" element={<Step4 />} />
+          <Route path="/results" element={<Results />} />
+        </Routes>
+      </Router>
+    </WizardProvider>
+  );
+}
+
+export default App;
