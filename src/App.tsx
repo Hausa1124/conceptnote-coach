@@ -437,7 +437,6 @@ const Step4: React.FC = () => {
     else next.add(r);
     setData(d => ({ ...d, risks: Array.from(next).join("\n") }));
   };
-
   // text shown in the "Other Risks" textbox (only non-common)
   const otherRisksText: string = Array.from(selectedRisks)
     .filter((r) => !ex.commonRisks.includes(r))
