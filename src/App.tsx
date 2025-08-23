@@ -343,8 +343,12 @@ const Step1: React.FC = () => {
 const Step2: React.FC = () => {
   const { data, setData } = useWizard();
   const nav = useNavigate();
-  const sectorKey = (data.sector || "Economic Development") as SectorKey;
-  const ex = examplesBySector[sectorKey];
+  // SAFE FALLBACK for sectors without examples
+  const ex =
+    (examplesBySector as Record<string, typeof examplesBySector["Economic Development"]>)[
+      data.sector as string
+    ] ?? examplesBySector["Economic Development"];
+
   return (
     <Frame stepIndex={1} total={4} title="Problem Statement" preview={<IntelligencePreview />}>
       <Section title="Problem Statement">
@@ -366,8 +370,12 @@ const Step2: React.FC = () => {
 const Step3: React.FC = () => {
   const { data, setData } = useWizard();
   const nav = useNavigate();
-  const sectorKey = (data.sector || "Economic Development") as SectorKey;
-  const ex = examplesBySector[sectorKey];
+  // SAFE FALLBACK for sectors without examples
+  const ex =
+    (examplesBySector as Record<string, typeof examplesBySector["Economic Development"]>)[
+      data.sector as string
+    ] ?? examplesBySector["Economic Development"];
+
   return (
     <Frame stepIndex={2} total={4} title="Implementation Plan" preview={<IntelligencePreview />}>
       <Section title="Target Beneficiaries">
@@ -394,8 +402,11 @@ const Step3: React.FC = () => {
 const Step4: React.FC = () => {
   const { data, setData } = useWizard();
   const nav = useNavigate();
-  const sectorKey = (data.sector || "Economic Development") as SectorKey;
-  const ex = examplesBySector[sectorKey];
+  // SAFE FALLBACK for sectors without examples
+  const ex =
+    (examplesBySector as Record<string, typeof examplesBySector["Economic Development"]>)[
+      data.sector as string
+    ] ?? examplesBySector["Economic Development"];
 
   const canSubmit = data.acknowledgeProtocols;
   const [loading, setLoading] = useState(false);
