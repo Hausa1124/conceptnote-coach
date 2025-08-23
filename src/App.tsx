@@ -10,7 +10,14 @@ export type WizardData = {
   organization: string;
   budget: string;
   duration: string;
-  sector: "Health" | "Education" | "WASH" | "Agriculture" | "Economic Development" | "Other" | "";
+  sector:
+    | "Health"
+    | "Education"
+    | "WASH"
+    | "Agriculture"
+    | "Economic Development"
+    | "Other"
+    | "";
   sectorOther?: string;
   donorChoice: "EU" | "USAID" | "UN" | "FAO" | "Other" | "";
   donorOther?: string;
@@ -196,7 +203,7 @@ const Frame: React.FC<{
   );
 };
 
-const ExampleCard: React.FC<{ title: string; items: string[] }> = ({ title, items }) => (
+const ExampleCard: React.FC<{ title: string; items: readonly string[] }> = ({ title, items }) => (
   <div className="card example">
     <div className="card-title">{title}</div>
     <ul className="card-list">{items.map((t, i) => <li key={i}>{t}</li>)}</ul>
@@ -259,7 +266,7 @@ const TextArea: React.FC<{ label: string; value: string; onChange: (v: string) =
 );
 
 const Select: React.FC<{
-  label: string; value: string; onChange: (v: string) => void; options: string[]; placeholder?: string;
+  label: string; value: string; onChange: (v: string) => void; options: readonly string[]; placeholder?: string;
 }> = ({ label, value, onChange, options, placeholder }) => (
   <label className="field">
     <div className="label">{label}</div>
