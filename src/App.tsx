@@ -237,16 +237,108 @@ const IntelligencePreview: React.FC = () => {
   const { data } = useWizard();
   return (
     <div className="intel">
-      <FieldRead label="Mission Designation" value={data.title || "—"} />
-      <FieldRead label="Operational Zone" value={data.countryRegion || "—"} />
-      <FieldRead
-        label="Funding Source"
-        value={data.donorChoice === "Other" ? (data.donorOther || "Other") : (data.donorChoice || "—")}
-      />
-      <FieldRead
-        label="Sector Classification"
-        value={data.sector === "Other" ? (data.sectorOther || "Other") : (data.sector || "—")}
-      />
+      {/* Basic Information */}
+      <div className="intel-section">
+        <h4 className="intel-section-title">Project Basics</h4>
+        <FieldRead label="Mission Designation" value={data.title || "—"} />
+        <FieldRead label="Operational Zone" value={data.countryRegion || "—"} />
+        <FieldRead label="Organization" value={data.organization || "—"} />
+        <FieldRead label="Budget (USD)" value={data.budget || "—"} />
+        <FieldRead label="Duration (months)" value={data.duration || "—"} />
+        <FieldRead
+          label="Funding Source"
+          value={data.donorChoice === "Other" ? (data.donorOther || "Other") : (data.donorChoice || "—")}
+        />
+        <FieldRead
+          label="Sector Classification"
+          value={data.sector === "Other" ? (data.sectorOther || "Other") : (data.sector || "—")}
+        />
+      </div>
+
+      {/* Problem & Objectives */}
+      {(data.problemStatement || data.objectives) && (
+        <div className="intel-section">
+          <h4 className="intel-section-title">Problem & Objectives</h4>
+          {data.problemStatement && (
+            <FieldRead 
+              label="Problem Statement" 
+              value={data.problemStatement.length > 150 
+                ? data.problemStatement.substring(0, 150) + "..." 
+                : data.problemStatement
+              } 
+            />
+          )}
+          {data.objectives && (
+            <FieldRead 
+              label="Objectives" 
+              value={data.objectives.length > 150 
+                ? data.objectives.substring(0, 150) + "..." 
+                : data.objectives
+              } 
+            />
+          )}
+        </div>
+      )}
+
+      {/* Implementation Plan */}
+      {(data.beneficiaries || data.activities || data.expectedResults) && (
+        <div className="intel-section">
+          <h4 className="intel-section-title">Implementation</h4>
+          {data.beneficiaries && (
+            <FieldRead 
+              label="Target Beneficiaries" 
+              value={data.beneficiaries.length > 100 
+                ? data.beneficiaries.substring(0, 100) + "..." 
+                : data.beneficiaries
+              } 
+            />
+          )}
+          {data.activities && (
+            <FieldRead 
+              label="Key Activities" 
+              value={data.activities.length > 100 
+                ? data.activities.substring(0, 100) + "..." 
+                : data.activities
+              } 
+            />
+          )}
+          {data.expectedResults && (
+            <FieldRead 
+              label="Expected Results" 
+              value={data.expectedResults.length > 100 
+                ? data.expectedResults.substring(0, 100) + "..." 
+                : data.expectedResults
+              } 
+            />
+          )}
+        </div>
+      )}
+
+      {/* Risk Assessment */}
+      {data.risks && (
+        <div className="intel-section">
+          <h4 className="intel-section-title">Risk Assessment</h4>
+          <FieldRead 
+            label="Identified Risks" 
+            value={(() => {
+              const riskList = data.risks.split('\n').filter(r => r.trim());
+              if (riskList.length === 0) return "—";
+              if (riskList.length <= 3) return riskList.join(', ');
+              return `${riskList.slice(0, 3).join(', ')} (+${riskList.length - 3} more)`;
+            })()} 
+          />
+        </div>
+      )}
+
+      {/* Contact & Settings */}
+      {(data.email || data.shareAnon || data.ghostMode) && (
+        <div className="intel-section">
+          <h4 className="intel-section-title">Settings</h4>
+          {data.email && <FieldRead label="Contact Email" value={data.email} />}
+          {data.shareAnon && <FieldRead label="Anonymous Sharing" value="Enabled" />}
+          {data.ghostMode && <FieldRead label="Ghost Mode" value="Active" />}
+        </div>
+      )}
     </div>
   );
 };

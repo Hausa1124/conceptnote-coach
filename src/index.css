@@ -30,3 +30,10 @@
 .error{color:#fecaca;background:#7f1d1d33;border:1px solid #7f1d1d;padding:8px;border-radius:10px}
 .results{max-width:900px;margin:24px auto;padding:0 16px}
 .analysis{white-space:pre-wrap;line-height:1.6;background:#0c1324;border:1px solid #1f2937;border-radius:14px;padding:16px}
+
+/* Intelligence Preview Sections */
+.intel-section{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #1f2937}
+.intel-section:last-child{border-bottom:none;margin-bottom:0}
+.intel-section-title{font-size:12px;font-weight:600;color:#8b5cf6;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px}
+.preview .read{border-bottom:1px solid #1f2937;padding:8px 0;margin-bottom:4px}
+.preview .read:last-child{border-bottom:none}
