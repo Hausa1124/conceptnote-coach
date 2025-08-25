@@ -14,6 +14,7 @@
 .input,.textarea,select.input{width:100%;border-radius:12px;border:1px solid #1f2937;background:#0c1324;color:var(--text);padding:12px}
 .textarea{min-height:130px;resize:vertical}
 .helper{font-size:12px;color:var(--muted);margin-top:6px}
+.word-counter{font-size:11px;color:#6b7280;text-align:right;margin-top:4px;font-weight:500}
 .card.example{background:#0d162d;border:1px solid #1f2937;border-radius:14px;padding:14px;margin-bottom:10px}
 .card-title{font-size:12px;letter-spacing:.2px;color:#a5b4fc;text-transform:uppercase}
 .card-list{margin:8px 0 0 16px}
