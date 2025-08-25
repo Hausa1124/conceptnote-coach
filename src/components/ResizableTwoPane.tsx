@@ -1,9 +1,8 @@
-// ResizableTwoPane.tsx
 import React, { useRef, useState } from "react";
 
 type Props = {
-  left: React.ReactNode;   // your form
-  right: React.ReactNode;  // your live preview
+  left: React.ReactNode;   // form
+  right: React.ReactNode;  // live preview
   initialPct?: number;     // default 40
   minPct?: number;         // default 35
   maxPct?: number;         // default 65
@@ -16,7 +15,7 @@ export default function ResizableTwoPane({
   minPct = 35,
   maxPct = 65,
 }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const [pct, setPct] = useState(initialPct);
   const [dragging, setDragging] = useState(false);
 
@@ -26,8 +25,8 @@ export default function ResizableTwoPane({
   };
 
   const onMove = (e: React.MouseEvent) => {
-    if (!dragging || !containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
+    if (!dragging || !wrapRef.current) return;
+    const rect = wrapRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     let next = (x / rect.width) * 100;
     if (next < minPct) next = minPct;
@@ -39,8 +38,8 @@ export default function ResizableTwoPane({
 
   return (
     <div
-      ref={containerRef}
-      className="w-full h-full flex select-none"
+      ref={wrapRef}
+      className="w-full h-full flex overflow-hidden select-none"
       onMouseMove={onMove}
       onMouseUp={onUp}
       onMouseLeave={onUp}
@@ -56,7 +55,7 @@ export default function ResizableTwoPane({
         role="separator"
         aria-orientation="vertical"
         aria-label="Resize panes"
-        className={`w-1 mx-1 cursor-col-resize ${
+        className={`w-1.5 mx-1 cursor-col-resize ${
           dragging ? "bg-blue-400" : "bg-slate-600/60"
         } rounded`}
         title="Drag to resize"
