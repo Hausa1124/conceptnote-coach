@@ -43,24 +43,36 @@ export default function Step1Basics() {
 
       <div className="grid2">
         <label className="field">
+          <span className="label">Currency</span>
+          <select 
+            className="input" 
+            value={data.currency} 
+            onChange={e => update({ currency: e.target.value })}
+          >
+            <option value="USD">USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+          </select>
+        </label>
+        <label className="field">
           <span className="label">Budget</span>
           <input 
             className="input" 
             value={data.budget} 
             onChange={e => update({ budget: e.target.value })} 
-            placeholder="e.g. $50,000"
-          />
-        </label>
-        <label className="field">
-          <span className="label">Duration</span>
-          <input 
-            className="input" 
-            value={data.duration} 
-            onChange={e => update({ duration: e.target.value })} 
-            placeholder="e.g. 12 months"
+            placeholder="e.g. 50,000"
           />
         </label>
       </div>
+
+      <label className="field">
+        <span className="label">Duration</span>
+        <input 
+          className="input" 
+          value={data.duration} 
+          onChange={e => update({ duration: e.target.value })} 
+          placeholder="e.g. 12 months"
+        />
+      </label>
 
       <label className="field">
         <span className="label">Sector</span>

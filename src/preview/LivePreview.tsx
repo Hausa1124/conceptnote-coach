@@ -10,7 +10,7 @@ export default function LivePreview() {
         <div className="card-title">Project Snapshot</div>
         <p><strong>{data.title || "Untitled Project"}</strong></p>
         <p>{data.organization} · {data.countryRegion}</p>
-        <p>{data.duration} · {data.budget}</p>
+        <p>{data.duration} · {data.currency} {data.budget}</p>
         <p>Donor: {data.donorChoice}{data.donorChoice === "Other" && data.donorOther ? ` (${data.donorOther})` : ""}</p>
       </div>
 

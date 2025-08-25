@@ -8,6 +8,7 @@ export type WizardData = {
   countryRegion: string;
   organization: string;
   budget: string;
+  currency: string;
   duration: string;
   sector: string;
   sectorOther?: string;
@@ -42,6 +43,7 @@ export const defaultWizardData: WizardData = {
   countryRegion: "",
   organization: "",
   budget: "",
+  currency: "USD",
   duration: "",
   sector: "",
   sectorOther: "",
