@@ -1,6 +1,9 @@
+// src/app/WizardContext.tsx
 import React, { createContext, useContext, useState } from "react";
 
+/** ====== Data shape ====== */
 export type WizardData = {
+  // Step 1 — Basics
   title: string;
   countryRegion: string;
   organization: string;
@@ -10,36 +13,31 @@ export type WizardData = {
   sectorOther?: string;
   donorChoice: string;
   donorOther?: string;
+
+  // Step 2 — Problem & Objectives
   problemStatement: string;
   objectives: string;
   objectivePreset: string;
-  beneficiaries: string;
-  activities: string;
-  expectedResults: string;
-  title: string;
-  countryRegion: string;
-  organization: string;
-  budget: string;
-  duration: string;
-  sector: string;
-  sectorOther?: string;
-  donorChoice: string;
-  donorOther?: string;
-  problemStatement: string;
-  objectives: string;
-  objectivePreset: string;
+
+  // Step 3 — Implementation
   beneficiaries: string;
   activities: string;
   expectedResults: string;
   risks: string;
+
+  // Step 4 — Finalize
   email: string;
   shareAnon: boolean;
   ghostMode: boolean;
   acknowledgeProtocols: boolean;
-  analysisText: string;
-};
 
-const defaultWizardData: WizardData = {
+  // Returned by backend
+  analysisText: string;
+}; // <-- make sure this brace and semicolon are present
+
+/** ====== Defaults ====== */
+export const defaultWizardData: WizardData = {
+  // Step 1
   title: "",
   countryRegion: "",
   organization: "",
@@ -49,80 +47,46 @@ const defaultWizardData: WizardData = {
   sectorOther: "",
   donorChoice: "",
   donorOther: "",
+
+  // Step 2
   problemStatement: "",
   objectives: "",
   objectivePreset: "",
+
+  // Step 3
   beneficiaries: "",
   activities: "",
   expectedResults: "",
   risks: "",
+
+  // Step 4
   email: "",
   shareAnon: false,
   ghostMode: false,
   acknowledgeProtocols: false,
-  analysisText: ""
-  sectorOther: "",
-  donorChoice: "",
-  donorOther: "",
-  problemStatement: "",
-  objectives: "",
-  objectivePreset: "",
-  beneficiaries: "",
-  activities: "",
-  expectedResults: "",
-  risks: "",
-  email: "",
-  shareAnon: false,
-  ghostMode: false,
-  acknowledgeProtocols: false,
-  analysisText: ""
+
+  // Backend
+  analysisText: "",
 };
 
-type WizardContextType = {
+/** ====== Context ====== */
+type Ctx = {
   data: WizardData;
-  update: (partial: Partial<WizardData>) => void;
-  reset: () => void;
-type WizardContextType = {
-  data: WizardData;
-  update: (partial: Partial<WizardData>) => void;
+  update: (p: Partial<WizardData>) => void;
   reset: () => void;
 };
-const WizardContext = createContext<WizardContextType | null>(null);
-const WizardContext = createContext<WizardContextType | null>(null);
+
+const WizardCtx = createContext<Ctx | null>(null);
 
 export const WizardProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [data, setData] = useState<WizardData>(defaultWizardData);
-  
-  const update = (partial: Partial<WizardData>) => {
-    setData(current => ({ ...current, ...partial }));
-  };
-  
-  const update = (partial: Partial<WizardData>) => {
-    setData(current => ({ ...current, ...partial }));
-  };
-  
-  const reset = () => {
-    setData(defaultWizardData);
-  };
-  
-  return (
-    <WizardContext.Provider value={{ data, update, reset }}>
-      {children}
-    </WizardContext.Provider>
-  
-  return (
-    <WizardContext.Provider value={{ data, update, reset }}>
-      {children}
-    </WizardContext.Provider>
-  );
+  const update = (p: Partial<WizardData>) => setData((d) => ({ ...d, ...p }));
+  const reset = () => setData(defaultWizardData);
+  return <WizardCtx.Provider value={{ data, update, reset }}>{children}</WizardCtx.Provider>;
 };
 
 export const useWizard = () => {
-  const context = useContext(WizardContext);
-  if (!context) {
-    throw new Error("useWizard must be used inside WizardProvider");
-  }
-  return context;
-  }
-  return context;
+  const ctx = useContext(WizardCtx);
+  if (!ctx) throw new Error("useWizard must be used inside WizardProvider");
+  return ctx;
 };
