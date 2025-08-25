@@ -15,10 +15,9 @@ export type WizardData = {
   donorChoice: string;
   donorOther?: string;
 
-  // Step 2 — Problem & Objectives
+  // Step 2 — Problem
   problemStatement: string;
   objectives: string;
-  objectivePreset: string;
 
   // Step 3 — Implementation
   beneficiaries: string;
@@ -53,7 +52,6 @@ export const defaultWizardData: WizardData = {
   // Step 2
   problemStatement: "",
   objectives: "",
-  objectivePreset: "",
 
   // Step 3
   beneficiaries: "",

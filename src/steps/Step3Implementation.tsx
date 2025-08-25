@@ -1,46 +1,36 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useWizard } from "../app/WizardContext";
+import Counter from "../components/Counter";
+import { LIMITS } from "../utils/limits";
+import { polishText } from "../utils/grammar";
+
+const wc = (s: string) => (s ? s.trim().split(/\s+/).filter(Boolean).length : 0);
 
 export default function Step3Implementation() {
   const { data, update } = useWizard();
   const nav = useNavigate();
 
-  const beneficiariesWordCount = data.beneficiaries
-    ? data.beneficiaries.split(/\s+/).filter(Boolean).length
-    : 0;
-  
-  const activitiesWordCount = data.activities
-    ? data.activities.split(/\s+/).filter(Boolean).length
-    : 0;
-  
-  const resultsWordCount = data.expectedResults
-    ? data.expectedResults.split(/\s+/).filter(Boolean).length
-    : 0;
+  // Risks with "Other"
+  const riskOptions = ["Funding", "Capacity", "Market", "Climate", "Compliance", "Logistics"];
+  const initial = data.risks ? data.risks.split(", ").filter(Boolean) : [];
+  const [gridSel, setGridSel] = React.useState<string[]>(initial.filter(r => riskOptions.includes(r)));
+  const [otherOn, setOtherOn] = React.useState<boolean>(initial.some(r => !riskOptions.includes(r)));
+  const [otherText, setOtherText] = React.useState<string>(initial.find(r => !riskOptions.includes(r)) || "");
 
-  const riskOptions = [
-    "Political instability",
-    "Economic volatility", 
-    "Environmental factors",
-    "Technical challenges",
-    "Resource constraints",
-    "Stakeholder resistance"
-  ];
+  const toggle = (r: string) =>
+    setGridSel((arr) => (arr.includes(r) ? arr.filter((x) => x !== r) : [...arr, r]));
 
-  const selectedRisks = data.risks.split(",").map(r => r.trim()).filter(r => r.length > 0);
+  React.useEffect(() => {
+    const list = [...gridSel];
+    if (otherOn && otherText.trim()) list.push(otherText.trim());
+    update({ risks: list.join(", ") });
+  }, [gridSel, otherOn, otherText, update]);
 
-  const toggleRisk = (risk: string) => {
-    const isSelected = selectedRisks.includes(risk);
-    let newRisks;
-    
-    if (isSelected) {
-      newRisks = selectedRisks.filter(r => r !== risk);
-    } else {
-      newRisks = [...selectedRisks, risk];
-    }
-    
-    update({ risks: newRisks.join(", ") });
-  };
+  const canNext =
+    wc(data.beneficiaries) > 0 &&
+    wc(data.activities) > 0 &&
+    wc(data.expectedResults) > 0;
 
   return (
     <section className="section">
@@ -54,9 +44,18 @@ export default function Step3Implementation() {
           onChange={e => update({ beneficiaries: e.target.value })} 
           placeholder="Who will benefit from this project?"
         />
-        <div className="word-counter">{beneficiariesWordCount} words</div>
+        <Counter text={data.beneficiaries} lims={LIMITS.beneficiaries} />
         <div className="helper" style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
           Who, where, how many. Example: "300 women farmers in Nyabihu, 6 co-ops."
+        </div>
+        <div className="actions" style={{ marginTop: 6 }}>
+          <button 
+            className="btn ghost" 
+            type="button" 
+            onClick={() => update({ beneficiaries: polishText(data.beneficiaries) })}
+          >
+            Polish
+          </button>
         </div>
       </label>
 
@@ -68,9 +67,18 @@ export default function Step3Implementation() {
           onChange={e => update({ activities: e.target.value })} 
           placeholder="What activities will be implemented?"
         />
-        <div className="word-counter">{activitiesWordCount} words</div>
+        <Counter text={data.activities} lims={LIMITS.activities} />
         <div className="helper" style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
           Start each line with a verb. Example: "Train 6 lead farmers; set up 2 demo plots…"
+        </div>
+        <div className="actions" style={{ marginTop: 6 }}>
+          <button 
+            className="btn ghost" 
+            type="button" 
+            onClick={() => update({ activities: polishText(data.activities) })}
+          >
+            Polish
+          </button>
         </div>
       </label>
 
@@ -82,9 +90,18 @@ export default function Step3Implementation() {
           onChange={e => update({ expectedResults: e.target.value })} 
           placeholder="What results do you expect to achieve?"
         />
-        <div className="word-counter">{resultsWordCount} words</div>
+        <Counter text={data.expectedResults} lims={LIMITS.expectedResults} />
         <div className="helper" style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
           Quantify results if possible. Example: "+20% yields; 15 new buyer contracts."
+        </div>
+        <div className="actions" style={{ marginTop: 6 }}>
+          <button 
+            className="btn ghost" 
+            type="button" 
+            onClick={() => update({ expectedResults: polishText(data.expectedResults) })}
+          >
+            Polish
+          </button>
         </div>
       </label>
 
@@ -94,18 +111,38 @@ export default function Step3Implementation() {
           {riskOptions.map(risk => (
             <div 
               key={risk}
-              className={`card example ${selectedRisks.includes(risk) ? 'selected' : ''}`}
-              onClick={() => toggleRisk(risk)}
+              className={`card example ${gridSel.includes(risk) ? 'selected' : ''}`}
+              onClick={() => toggle(risk)}
               style={{ 
                 cursor: 'pointer',
-                backgroundColor: selectedRisks.includes(risk) ? '#0d162d' : '#0c1324',
-                border: selectedRisks.includes(risk) ? '1px solid #3b82f6' : '1px solid #1f2937'
+                backgroundColor: gridSel.includes(risk) ? '#0d162d' : '#0c1324',
+                border: gridSel.includes(risk) ? '1px solid #3b82f6' : '1px solid #1f2937'
               }}
             >
               <div className="card-title">{risk}</div>
             </div>
           ))}
+          <div 
+            className={`card example ${otherOn ? 'selected' : ''}`}
+            onClick={() => setOtherOn(v => !v)}
+            style={{ 
+              cursor: 'pointer',
+              backgroundColor: otherOn ? '#0d162d' : '#0c1324',
+              border: otherOn ? '1px solid #3b82f6' : '1px solid #1f2937'
+            }}
+          >
+            <div className="card-title">Other</div>
+          </div>
         </div>
+        {otherOn && (
+          <input
+            className="input" 
+            style={{ marginTop: 8 }}
+            placeholder="Type other risk…"
+            value={otherText}
+            onChange={(e) => setOtherText(e.target.value)}
+          />
+        )}
       </div>
 
       <div className="navrow">
@@ -117,6 +154,7 @@ export default function Step3Implementation() {
         </button>
         <button 
           className="btn primary" 
+          disabled={!canNext}
           onClick={() => nav("/wizard/step-4")}
         >
           Next

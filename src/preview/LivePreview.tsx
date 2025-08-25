@@ -18,7 +18,6 @@ export default function LivePreview() {
         <div className="card-title">Problem & Objectives</div>
         <p>{data.problemStatement || "—"}</p>
         <p><em>{data.objectives || "—"}</em></p>
-        {data.objectivePreset && <p>Preset: {data.objectivePreset}</p>}
       </div>
 
       <div className="card example">

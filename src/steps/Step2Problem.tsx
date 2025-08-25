@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useWizard } from "../app/WizardContext";
 import { getStep2Guidance } from "../utils/nudges";
 import { evalSMART } from "../utils/smart";
+import Counter from "../components/Counter";
+import { LIMITS } from "../utils/limits";
+import { polishText } from "../utils/grammar";
 
 const words = (s: string) => (s ? s.trim().split(/\s+/).filter(Boolean).length : 0);
 
@@ -47,8 +50,7 @@ export default function Step2Problem() {
     [data.objectives, data.problemStatement]
   );
 
-  const problemWordCount = data.problemStatement.split(/\s+/).filter(word => word.length > 0).length;
-  const objectivesWordCount = data.objectives.split(/\s+/).filter(word => word.length > 0).length;
+  const canNext = words(data.problemStatement) > 0 && words(data.objectives) > 0;
 
   return (
     <section className="section">
@@ -62,9 +64,18 @@ export default function Step2Problem() {
           onChange={e => update({ problemStatement: e.target.value })} 
           placeholder={g.problemPlaceholder}
         />
-        <div className="word-counter">{problemWordCount} words</div>
+        <Counter text={data.problemStatement} lims={LIMITS.problemStatement} />
         <div className="helper" style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>{g.problemHint}</div>
         <SmartMeter flags={problemFlags} />
+        <div className="actions" style={{ marginTop: 6 }}>
+          <button 
+            className="btn ghost" 
+            type="button" 
+            onClick={() => update({ problemStatement: polishText(data.problemStatement) })}
+          >
+            Polish
+          </button>
+        </div>
       </label>
 
       <label className="field">
@@ -75,25 +86,18 @@ export default function Step2Problem() {
           onChange={e => update({ objectives: e.target.value })} 
           placeholder={g.objectivesPlaceholder}
         />
-        <div className="word-counter">{objectivesWordCount} words</div>
+        <Counter text={data.objectives} lims={LIMITS.objectives} />
         <div className="helper" style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>{g.objectivesHint}</div>
         <SmartMeter flags={objectiveFlags} />
-      </label>
-
-      <label className="field">
-        <span className="label">Objectives Preset</span>
-        <select 
-          className="input" 
-          value={data.objectivePreset} 
-          onChange={e => update({ objectivePreset: e.target.value })}
-        >
-          <option value="">Select preset…</option>
-          <option value="Capacity Building">Capacity Building</option>
-          <option value="Service Delivery">Service Delivery</option>
-          <option value="Infrastructure Development">Infrastructure Development</option>
-          <option value="Policy Advocacy">Policy Advocacy</option>
-          <option value="Research & Development">Research & Development</option>
-        </select>
+        <div className="actions" style={{ marginTop: 6 }}>
+          <button 
+            className="btn ghost" 
+            type="button" 
+            onClick={() => update({ objectives: polishText(data.objectives) })}
+          >
+            Polish
+          </button>
+        </div>
       </label>
 
       <div className="navrow">
@@ -105,6 +109,7 @@ export default function Step2Problem() {
         </button>
         <button 
           className="btn primary" 
+          disabled={!canNext}
           onClick={() => nav("/wizard/step-3")}
         >
           Next
