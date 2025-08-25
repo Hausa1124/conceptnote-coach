@@ -101,5 +101,6 @@ export default function Step2Problem() {
         </button>
       </div>
     </section>
+  )
   );
 }
