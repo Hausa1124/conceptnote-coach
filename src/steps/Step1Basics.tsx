@@ -49,8 +49,16 @@ export default function Step1Basics() {
           onChange={e => update({ title: e.target.value })} 
           placeholder="Enter project title"
         />
+      </label>
+      <label className="field">
           <span className="label">Budget</span>
           <input 
+            className="input" 
+            value={data.budget} 
+            onChange={e => update({ budget: e.target.value })} 
+            placeholder="e.g. $50,000"
+          />
+      </label>
       <label className="field">
         <span className="label">Country / Region *</span>
         <input 
@@ -59,8 +67,8 @@ export default function Step1Basics() {
           onChange={e => update({ countryRegion: e.target.value })} 
           placeholder="e.g. Kenya, East Africa"
         />
-            onChange={e => update({ budget: e.target.value })} 
-            placeholder="e.g. $50,000"
+      </label>
+
       <label className="field">
         <span className="label">Organization *</span>
         <input 
@@ -69,8 +77,16 @@ export default function Step1Basics() {
           onChange={e => update({ organization: e.target.value })} 
           placeholder="Your organization name"
         />
+      </label>
         <label className="field">
           <span className="label">Duration</span>
+          <input 
+            className="input" 
+            value={data.duration} 
+            onChange={e => update({ duration: e.target.value })} 
+            placeholder="e.g. 12 months"
+          />
+        </label>
       <div className="grid2">
         <label className="field">
           <span className="label">Budget</span>
@@ -80,7 +96,7 @@ export default function Step1Basics() {
             onChange={e => update({ budget: e.target.value })} 
             placeholder="e.g. $50,000"
           />
-            onChange={e => update({ duration: e.target.value })} 
+        </label>
         <label className="field">
           <span className="label">Duration</span>
           <input 
@@ -101,6 +117,13 @@ export default function Step1Basics() {
         >
           <option value="">Select sector…</option>
           <option value="Health">Health</option>
+          <option value="Education">Education</option>
+          <option value="WASH">WASH</option>
+          <option value="Agriculture">Agriculture</option>
+          <option value="Economic Development">Economic Development</option>
+          <option value="Other">Other</option>
+        </select>
+      </label>
       <label className="field">
         <span className="label">Sector</span>
         <select 
@@ -134,6 +157,17 @@ export default function Step1Basics() {
         <span className="label">Donor</span>
         <select 
           className="input" 
+          value={data.donorChoice} 
+          onChange={e => update({ donorChoice: e.target.value })}
+        >
+          <option value="">Select donor…</option>
+          <option value="EU">EU</option>
+          <option value="USAID">USAID</option>
+          <option value="UN">UN</option>
+          <option value="FAO">FAO</option>
+          <option value="Other">Other</option>
+        </select>
+      </label>
         <label className="field">
           <span className="label">Specify sector</span>
           <input 
@@ -142,9 +176,8 @@ export default function Step1Basics() {
             onChange={e => update({ sectorOther: e.target.value })} 
             placeholder="Please specify"
           />
-        >
-          <option value="">Select donor…</option>
-          <option value="EU">EU</option>
+        </label>
+
       <label className="field">
         <span className="label">Donor</span>
         <select 
@@ -188,6 +221,7 @@ export default function Step1Basics() {
         >
           Next
         </button>
+        <button 
           className="btn primary" 
           disabled={!canNext} 
           onClick={() => nav("/wizard/step-2")}
