@@ -55,6 +55,9 @@ export default function Step3Implementation() {
           placeholder="Who will benefit from this project?"
         />
         <div className="word-counter">{beneficiariesWordCount} words</div>
+        <div className="helper" style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
+          Who, where, how many. Example: "300 women farmers in Nyabihu, 6 co-ops."
+        </div>
       </label>
 
       <label className="field">
@@ -66,6 +69,9 @@ export default function Step3Implementation() {
           placeholder="What activities will be implemented?"
         />
         <div className="word-counter">{activitiesWordCount} words</div>
+        <div className="helper" style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
+          Start each line with a verb. Example: "Train 6 lead farmers; set up 2 demo plots…"
+        </div>
       </label>
 
       <label className="field">
@@ -77,6 +83,9 @@ export default function Step3Implementation() {
           placeholder="What results do you expect to achieve?"
         />
         <div className="word-counter">{resultsWordCount} words</div>
+        <div className="helper" style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
+          Quantify results if possible. Example: "+20% yields; 15 new buyer contracts."
+        </div>
       </label>
 
       <div className="field">
