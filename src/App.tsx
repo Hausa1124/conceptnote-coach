@@ -2,6 +2,77 @@
 import React, { createContext, useContext, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 
+/* ---------- Grammar Correction Utility ---------- */
+const correctGrammar = (text: string): string => {
+  if (!text || text.trim().length === 0) return text;
+  
+  let corrected = text;
+  
+  // Basic capitalization fixes
+  corrected = corrected.replace(/^\s*([a-z])/g, (match, letter) => 
+    match.replace(letter, letter.toUpperCase())
+  );
+  
+  // Fix sentence starts after periods
+  corrected = corrected.replace(/\.\s+([a-z])/g, (match, letter) => 
+    match.replace(letter, letter.toUpperCase())
+  );
+  
+  // Common grammar fixes
+  const grammarFixes = [
+    // Subject-verb agreement
+    [/\bi is\b/g, 'I am'],
+    [/\bwe is\b/g, 'we are'],
+    [/\bthey is\b/g, 'they are'],
+    [/\byou is\b/g, 'you are'],
+    
+    // Article fixes
+    [/\ba ([aeiou])/gi, 'an $1'],
+    [/\ban ([^aeiou])/gi, 'a $1'],
+    
+    // Common word corrections
+    [/\bthere is many\b/gi, 'there are many'],
+    [/\bthere is several\b/gi, 'there are several'],
+    [/\bthis are\b/gi, 'these are'],
+    [/\bthat are\b/gi, 'those are'],
+    
+    // Preposition fixes
+    [/\bin the rural area\b/gi, 'in rural areas'],
+    [/\bin the urban area\b/gi, 'in urban areas'],
+    
+    // Common ESL mistakes
+    [/\bmake a training\b/gi, 'provide training'],
+    [/\bdo a training\b/gi, 'conduct training'],
+    [/\bmake a meeting\b/gi, 'hold a meeting'],
+    [/\bdo a meeting\b/gi, 'hold a meeting'],
+    
+    // Plural/singular consistency
+    [/\b(\d+)\s+person\b/g, '$1 people'],
+    [/\bmany person\b/gi, 'many people'],
+    [/\bseveral person\b/gi, 'several people'],
+    
+    // Time expressions
+    [/\bfor (\d+) month\b/g, 'for $1 months'],
+    [/\bfor (\d+) year\b/g, 'for $1 years'],
+    [/\bin (\d+) month\b/g, 'in $1 months'],
+    [/\bin (\d+) year\b/g, 'in $1 years'],
+  ];
+  
+  grammarFixes.forEach(([pattern, replacement]) => {
+    corrected = corrected.replace(pattern, replacement as string);
+  });
+  
+  // Fix double spaces
+  corrected = corrected.replace(/\s+/g, ' ');
+  
+  // Ensure proper sentence ending
+  corrected = corrected.trim();
+  if (corrected && !corrected.match(/[.!?]$/)) {
+    corrected += '.';
+  }
+  
+  return corrected;
+};
 /* ---------- Types ---------- */
 export type WizardData = {
   // Step 1 — Basics
@@ -353,6 +424,15 @@ const Input: React.FC<{
       className="input"
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onBlur={(e) => {
+        // Only apply grammar correction to text fields, not email/number fields
+        if (type === "text" && e.target.value.length > 10) {
+          const corrected = correctGrammar(e.target.value);
+          if (corrected !== e.target.value) {
+            onChange(corrected);
+          }
+        }
+      }}
       placeholder={placeholder}
       type={type}
     />
@@ -367,8 +447,15 @@ const TextArea: React.FC<{ label: string; value: string; onChange: (v: string) =
       className="textarea"
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onBlur={(e) => {
+        const corrected = correctGrammar(e.target.value);
+        if (corrected !== e.target.value) {
+          onChange(corrected);
+        }
+      }}
       placeholder={placeholder}
     />
+    <div className="helper">✨ Grammar will be automatically improved when you finish typing</div>
   </label>
 );
 
