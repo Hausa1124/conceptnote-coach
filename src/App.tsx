@@ -1,78 +1,80 @@
 // App.tsx — Bavarios-Exact UI (two-pane, examples, live preview)
 import React, { createContext, useContext, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import ResizableTwoPane from "./components/ResizableTwoPane";
 
 /* ---------- Grammar Correction Utility ---------- */
 const correctGrammar = (text: string): string => {
   if (!text || text.trim().length === 0) return text;
-  
+
   let corrected = text;
-  
+
   // Basic capitalization fixes
-  corrected = corrected.replace(/^\s*([a-z])/g, (match, letter) => 
+  corrected = corrected.replace(/^\s*([a-z])/g, (match, letter) =>
     match.replace(letter, letter.toUpperCase())
   );
-  
+
   // Fix sentence starts after periods
-  corrected = corrected.replace(/\.\s+([a-z])/g, (match, letter) => 
+  corrected = corrected.replace(/\.\s+([a-z])/g, (match, letter) =>
     match.replace(letter, letter.toUpperCase())
   );
-  
+
   // Common grammar fixes
-  const grammarFixes = [
+  const grammarFixes: Array<[RegExp, string]> = [
     // Subject-verb agreement
-    [/\bi is\b/g, 'I am'],
-    [/\bwe is\b/g, 'we are'],
-    [/\bthey is\b/g, 'they are'],
-    [/\byou is\b/g, 'you are'],
-    
+    [/\bi is\b/g, "I am"],
+    [/\bwe is\b/g, "we are"],
+    [/\bthey is\b/g, "they are"],
+    [/\byou is\b/g, "you are"],
+
     // Article fixes
-    [/\ba ([aeiou])/gi, 'an $1'],
-    [/\ban ([^aeiou])/gi, 'a $1'],
-    
+    [/\ba ([aeiou])/gi, "an $1"],
+    [/\ban ([^aeiou])/gi, "a $1"],
+
     // Common word corrections
-    [/\bthere is many\b/gi, 'there are many'],
-    [/\bthere is several\b/gi, 'there are several'],
-    [/\bthis are\b/gi, 'these are'],
-    [/\bthat are\b/gi, 'those are'],
-    
+    [/\bthere is many\b/gi, "there are many"],
+    [/\bthere is several\b/gi, "there are several"],
+    [/\bthis are\b/gi, "these are"],
+    [/\bthat are\b/gi, "those are"],
+
     // Preposition fixes
-    [/\bin the rural area\b/gi, 'in rural areas'],
-    [/\bin the urban area\b/gi, 'in urban areas'],
-    
+    [/\bin the rural area\b/gi, "in rural areas"],
+    [/\bin the urban area\b/gi, "in urban areas"],
+
     // Common ESL mistakes
-    [/\bmake a training\b/gi, 'provide training'],
-    [/\bdo a training\b/gi, 'conduct training'],
-    [/\bmake a meeting\b/gi, 'hold a meeting'],
-    [/\bdo a meeting\b/gi, 'hold a meeting'],
-    
+    [/\bmake a training\b/gi, "provide training"],
+    [/\bdo a training\b/gi, "conduct training"],
+    [/\bmake a meeting\b/gi, "hold a meeting"],
+    [/\bdo a meeting\b/gi, "hold a meeting"],
+
     // Plural/singular consistency
-    [/\b(\d+)\s+person\b/g, '$1 people'],
-    [/\bmany person\b/gi, 'many people'],
-    [/\bseveral person\b/gi, 'several people'],
-    
+    [/\b(\d+)\s+person\b/g, "$1 people"],
+    [/\bmany person\b/gi, "many people"],
+    [/\bseveral person\b/gi, "several people"],
+
     // Time expressions
-    [/\bfor (\d+) month\b/g, 'for $1 months'],
-    [/\bfor (\d+) year\b/g, 'for $1 years'],
-    [/\bin (\d+) month\b/g, 'in $1 months'],
-    [/\bin (\d+) year\b/g, 'in $1 years'],
+    [/\bfor (\d+) month\b/g, "for $1 months"],
+    [/\bfor (\d+) year\b/g, "for $1 years"],
+    [/\bin (\d+) month\b/g, "in $1 months"],
+    [/\bin (\d+) year\b/g, "in $1 years"],
   ];
-  
+
   grammarFixes.forEach(([pattern, replacement]) => {
-    corrected = corrected.replace(pattern, replacement as string);
+    corrected = corrected.replace(pattern, replacement);
   });
-  
+
   // Fix double spaces
-  corrected = corrected.replace(/\s+/g, ' ');
-  
+  corrected = corrected.replace(/\s+/g, " ");
+
   // Ensure proper sentence ending
   corrected = corrected.trim();
   if (corrected && !corrected.match(/[.!?]$/)) {
-    corrected += '.';
+    corrected += ".";
   }
-  
+
   return corrected;
 };
+
 /* ---------- Types ---------- */
 export type WizardData = {
   // Step 1 — Basics
@@ -260,22 +262,30 @@ const Frame: React.FC<{
         <div className="secure">Secure Mode</div>
       </header>
 
-      <div className="two-pane">
-        <section className="pane-left">
-          <h2 className="pane-title">{title}</h2>
-          <div className="pane-scroll">{children}</div>
-        </section>
-        <aside className="pane-right">
-          <div className="pane-scroll">
-            <div className="preview">
-              <div className="preview-head">
-                <span className="dot live" /> LIVE FEED ACTIVE
+      {/* ⬇️ Resizable two‑pane replacement */}
+      <ResizableTwoPane
+        initialPct={40}   // default 40/60 split
+        minPct={35}       // user can't shrink left below 35%
+        maxPct={65}       // or grow above 65%
+        left={
+          <section className="pane-left">
+            <h2 className="pane-title">{title}</h2>
+            <div className="pane-scroll">{children}</div>
+          </section>
+        }
+        right={
+          <aside className="pane-right">
+            <div className="pane-scroll">
+              <div className="preview">
+                <div className="preview-head">
+                  <span className="dot live" /> LIVE FEED ACTIVE
+                </div>
+                {preview}
               </div>
-              {preview}
             </div>
-          </div>
-        </aside>
-      </div>
+          </aside>
+        }
+      />
     </div>
   );
 };
@@ -318,11 +328,19 @@ const IntelligencePreview: React.FC = () => {
         <FieldRead label="Duration (months)" value={data.duration || "—"} />
         <FieldRead
           label="Funding Source"
-          value={data.donorChoice === "Other" ? (data.donorOther || "Other") : (data.donorChoice || "—")}
+          value={
+            data.donorChoice === "Other"
+              ? (data.donorOther || "Other")
+              : (data.donorChoice || "—")
+          }
         />
         <FieldRead
           label="Sector Classification"
-          value={data.sector === "Other" ? (data.sectorOther || "Other") : (data.sector || "—")}
+          value={
+            data.sector === "Other"
+              ? (data.sectorOther || "Other")
+              : (data.sector || "—")
+          }
         />
       </div>
 
@@ -331,21 +349,23 @@ const IntelligencePreview: React.FC = () => {
         <div className="intel-section">
           <h4 className="intel-section-title">Problem & Objectives</h4>
           {data.problemStatement && (
-            <FieldRead 
-              label="Problem Statement" 
-              value={data.problemStatement.length > 150 
-                ? data.problemStatement.substring(0, 150) + "..." 
-                : data.problemStatement
-              } 
+            <FieldRead
+              label="Problem Statement"
+              value={
+                data.problemStatement.length > 150
+                  ? data.problemStatement.substring(0, 150) + "..."
+                  : data.problemStatement
+              }
             />
           )}
           {data.objectives && (
-            <FieldRead 
-              label="Objectives" 
-              value={data.objectives.length > 150 
-                ? data.objectives.substring(0, 150) + "..." 
-                : data.objectives
-              } 
+            <FieldRead
+              label="Objectives"
+              value={
+                data.objectives.length > 150
+                  ? data.objectives.substring(0, 150) + "..."
+                  : data.objectives
+              }
             />
           )}
         </div>
@@ -356,30 +376,33 @@ const IntelligencePreview: React.FC = () => {
         <div className="intel-section">
           <h4 className="intel-section-title">Implementation</h4>
           {data.beneficiaries && (
-            <FieldRead 
-              label="Target Beneficiaries" 
-              value={data.beneficiaries.length > 100 
-                ? data.beneficiaries.substring(0, 100) + "..." 
-                : data.beneficiaries
-              } 
+            <FieldRead
+              label="Target Beneficiaries"
+              value={
+                data.beneficiaries.length > 100
+                  ? data.beneficiaries.substring(0, 100) + "..."
+                  : data.beneficiaries
+              }
             />
           )}
           {data.activities && (
-            <FieldRead 
-              label="Key Activities" 
-              value={data.activities.length > 100 
-                ? data.activities.substring(0, 100) + "..." 
-                : data.activities
-              } 
+            <FieldRead
+              label="Key Activities"
+              value={
+                data.activities.length > 100
+                  ? data.activities.substring(0, 100) + "..."
+                  : data.activities
+              }
             />
           )}
           {data.expectedResults && (
-            <FieldRead 
-              label="Expected Results" 
-              value={data.expectedResults.length > 100 
-                ? data.expectedResults.substring(0, 100) + "..." 
-                : data.expectedResults
-              } 
+            <FieldRead
+              label="Expected Results"
+              value={
+                data.expectedResults.length > 100
+                  ? data.expectedResults.substring(0, 100) + "..."
+                  : data.expectedResults
+              }
             />
           )}
         </div>
@@ -389,14 +412,14 @@ const IntelligencePreview: React.FC = () => {
       {data.risks && (
         <div className="intel-section">
           <h4 className="intel-section-title">Risk Assessment</h4>
-          <FieldRead 
-            label="Identified Risks" 
+          <FieldRead
+            label="Identified Risks"
             value={(() => {
-              const riskList = data.risks.split('\n').filter(r => r.trim());
+              const riskList = data.risks.split("\n").filter((r) => r.trim());
               if (riskList.length === 0) return "—";
-              if (riskList.length <= 3) return riskList.join(', ');
-              return `${riskList.slice(0, 3).join(', ')} (+${riskList.length - 3} more)`;
-            })()} 
+              if (riskList.length <= 3) return riskList.join(", ");
+              return `${riskList.slice(0, 3).join(", ")} (+${riskList.length - 3} more)`;
+            })()}
           />
         </div>
       )}
@@ -416,7 +439,11 @@ const IntelligencePreview: React.FC = () => {
 
 /* ---------- Inputs ---------- */
 const Input: React.FC<{
-  label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  type?: string;
 }> = ({ label, value, onChange, placeholder, type = "text" }) => (
   <label className="field">
     <div className="label">{label}</div>
@@ -439,8 +466,12 @@ const Input: React.FC<{
   </label>
 );
 
-const TextArea: React.FC<{ label: string; value: string; onChange: (v: string) => void; placeholder?: string; }> =
-({ label, value, onChange, placeholder }) => (
+const TextArea: React.FC<{
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}> = ({ label, value, onChange, placeholder }) => (
   <label className="field">
     <div className="label">{label}</div>
     <textarea
@@ -460,21 +491,31 @@ const TextArea: React.FC<{ label: string; value: string; onChange: (v: string) =
 );
 
 const Select: React.FC<{
-  label: string; value: string; onChange: (v: string) => void; options: readonly string[]; placeholder?: string;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: readonly string[];
+  placeholder?: string;
 }> = ({ label, value, onChange, options, placeholder }) => (
   <label className="field">
     <div className="label">{label}</div>
     <select className="input" value={value} onChange={(e) => onChange(e.target.value)}>
       <option value="">{placeholder || "Select"}</option>
       {options.map((o) => (
-        <option key={o} value={o}>{o}</option>
+        <option key={o} value={o}>
+          {o}
+        </option>
       ))}
     </select>
   </label>
 );
 
-const Checkbox: React.FC<{ label: string; checked: boolean; onChange: (v: boolean) => void; note?: string; }> =
-({ label, checked, onChange, note }) => (
+const Checkbox: React.FC<{
+  label: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  note?: string;
+}> = ({ label, checked, onChange, note }) => (
   <label className="check">
     <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
     <span>{label}</span>
@@ -482,8 +523,12 @@ const Checkbox: React.FC<{ label: string; checked: boolean; onChange: (v: boolea
   </label>
 );
 
-const NavRow: React.FC<{ onPrev?: () => void; onNext?: () => void; nextLabel?: string; disabledNext?: boolean; }> =
-({ onPrev, onNext, nextLabel = "Next", disabledNext }) => (
+const NavRow: React.FC<{
+  onPrev?: () => void;
+  onNext?: () => void;
+  nextLabel?: string;
+  disabledNext?: boolean;
+}> = ({ onPrev, onNext, nextLabel = "Next", disabledNext }) => (
   <div className="navrow">
     {onPrev ? <button className="btn ghost" onClick={onPrev}>Previous</button> : <span />}
     {onNext && (
@@ -501,32 +546,32 @@ const Step1: React.FC = () => {
   return (
     <Frame stepIndex={0} total={4} title="Basics" preview={<IntelligencePreview />}>
       <Section title="Project Basics">
-        <Input label="Concept Title" value={data.title} onChange={(v) => setData(d => ({ ...d, title: v }))} placeholder="e.g., Pineapple Passion" />
-        <Input label="Country/Region" value={data.countryRegion} onChange={(v) => setData(d => ({ ...d, countryRegion: v }))} placeholder="Rwanda" />
-        <Input label="Organization" value={data.organization} onChange={(v) => setData(d => ({ ...d, organization: v }))} />
+        <Input label="Concept Title" value={data.title} onChange={(v) => setData((d) => ({ ...d, title: v }))} placeholder="e.g., Pineapple Passion" />
+        <Input label="Country/Region" value={data.countryRegion} onChange={(v) => setData((d) => ({ ...d, countryRegion: v }))} placeholder="Rwanda" />
+        <Input label="Organization" value={data.organization} onChange={(v) => setData((d) => ({ ...d, organization: v }))} />
         <div className="grid2">
-          <Input label="Budget (USD)" value={data.budget} onChange={(v) => setData(d => ({ ...d, budget: v }))} />
-          <Input label="Duration (months)" value={data.duration} onChange={(v) => setData(d => ({ ...d, duration: v }))} />
+          <Input label="Budget (USD)" value={data.budget} onChange={(v) => setData((d) => ({ ...d, budget: v }))} />
+          <Input label="Duration (months)" value={data.duration} onChange={(v) => setData((d) => ({ ...d, duration: v }))} />
         </div>
         <Select
           label="Sector"
           value={data.sector}
-          onChange={(v) => setData(d => ({ ...d, sector: v as WizardData["sector"] }))}
+          onChange={(v) => setData((d) => ({ ...d, sector: v as WizardData["sector"] }))}
           options={["Economic Development", "Agriculture", "Health", "Education", "WASH", "Other"]}
           placeholder="Select sector"
         />
         {data.sector === "Other" && (
-          <Input label="Sector (Other)" value={data.sectorOther || ""} onChange={(v) => setData(d => ({ ...d, sectorOther: v }))} />
+          <Input label="Sector (Other)" value={data.sectorOther || ""} onChange={(v) => setData((d) => ({ ...d, sectorOther: v }))} />
         )}
         <Select
           label="Donor"
           value={data.donorChoice}
-          onChange={(v) => setData(d => ({ ...d, donorChoice: v as WizardData["donorChoice"] }))}
+          onChange={(v) => setData((d) => ({ ...d, donorChoice: v as WizardData["donorChoice"] }))}
           options={["EU", "USAID", "UN", "FAO", "Other"]}
           placeholder="Select donor"
         />
         {data.donorChoice === "Other" && (
-          <Input label="Donor (Other)" value={data.donorOther || ""} onChange={(v) => setData(d => ({ ...d, donorOther: v }))} />
+          <Input label="Donor (Other)" value={data.donorOther || ""} onChange={(v) => setData((d) => ({ ...d, donorOther: v }))} />
         )}
       </Section>
       <NavRow onNext={() => nav("/step-2")} />
@@ -543,7 +588,7 @@ const Step2: React.FC = () => {
     <Frame stepIndex={1} total={4} title="Problem Statement" preview={<IntelligencePreview />}>
       <Section title="Problem Statement">
         <ExampleCard title="EXAMPLE PROBLEM" items={ex.problemExample} />
-        <TextArea label="Problem Statement" value={data.problemStatement} onChange={(v) => setData(d => ({ ...d, problemStatement: v }))} placeholder={ex.problemNudge} />
+        <TextArea label="Problem Statement" value={data.problemStatement} onChange={(v) => setData((d) => ({ ...d, problemStatement: v }))} placeholder={ex.problemNudge} />
         <HelperText text={ex.problemNudge} />
       </Section>
 
@@ -552,7 +597,7 @@ const Step2: React.FC = () => {
         <TextArea
           label="Objectives"
           value={data.objectives}
-          onChange={(v) => setData(d => ({ ...d, objectives: v }))}
+          onChange={(v) => setData((d) => ({ ...d, objectives: v }))}
           placeholder="Write your objectives…"
         />
       </Section>
@@ -571,13 +616,13 @@ const Step3: React.FC = () => {
     <Frame stepIndex={2} total={4} title="Implementation Plan" preview={<IntelligencePreview />}>
       <Section title="Target Beneficiaries">
         <ExampleCard title="EXAMPLE BENEFICIARY DESCRIPTION" items={ex.beneficiariesExample} />
-        <TextArea label="Beneficiaries" value={data.beneficiaries} onChange={(v) => setData(d => ({ ...d, beneficiaries: v }))} placeholder={ex.beneficiariesNudge} />
+        <TextArea label="Beneficiaries" value={data.beneficiaries} onChange={(v) => setData((d) => ({ ...d, beneficiaries: v }))} placeholder={ex.beneficiariesNudge} />
         <HelperText text={ex.beneficiariesNudge} />
       </Section>
 
       <Section title="Project Activities">
         <ExampleCard title="EXAMPLE ACTIVITIES" items={ex.activitiesExample} />
-        <TextArea label="Activities" value={data.activities} onChange={(v) => setData(d => ({ ...d, activities: v }))} placeholder={ex.activitiesNudge} />
+        <TextArea label="Activities" value={data.activities} onChange={(v) => setData((d) => ({ ...d, activities: v }))} placeholder={ex.activitiesNudge} />
         <HelperText text={ex.activitiesNudge} />
       </Section>
 
@@ -586,7 +631,7 @@ const Step3: React.FC = () => {
         <TextArea
           label="Expected Results (your draft)"
           value={data.expectedResults}
-          onChange={(v) => setData(d => ({ ...d, expectedResults: v }))}
+          onChange={(v) => setData((d) => ({ ...d, expectedResults: v }))}
           placeholder="List the measurable outputs/outcomes you expect…"
         />
       </Section>
