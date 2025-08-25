@@ -11,7 +11,7 @@ const sectorBase: Record<string, Partial<Step2Guidance>> = {
     problemPlaceholder: "State the health gap (who/where) and evidence/baseline.",
     objectivesPlaceholder: "2–3 SMART outcomes (e.g., +30% ANC visits in 12 months).",
     problemHint: "Name population, location, evidence source (HMIS, survey).",
-    objectivesHint: "Use numbers and a timeframe. Example: "Increase ... by 25% in 12 months."",
+    objectivesHint: "Use numbers and a timeframe. Example: \"Increase ... by 25% in 12 months."",
   },
   Education: {
     problemPlaceholder: "Describe the learning gap (grades, skills) and root causes.",
