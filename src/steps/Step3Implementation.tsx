@@ -111,6 +111,9 @@ export default function Step3Implementation() {
         <div className="text-sm text-gray-600 mb-1">
           <strong>Examples:</strong> "Train 50 lead farmers on climate-smart techniques; establish 10 demonstration plots; conduct 24 monthly field visits" • "Deliver 6 training modules to 45 midwives; provide emergency kits to 15 health centers"
         </div>
+        <div className="text-sm text-gray-600 mb-1">
+          <strong>Examples:</strong> "Train 50 lead farmers on climate-smart techniques; establish 10 demonstration plots; conduct 24 monthly field visits" • "Deliver 6 training modules to 45 midwives; provide emergency kits to 15 health centers"
+        </div>
         <textarea 
           className="textarea" 
           value={data.activities} 
@@ -134,6 +137,9 @@ export default function Step3Implementation() {
 
       <label className="field">
         <span className="label">Expected Results</span>
+        <div className="text-sm text-gray-600 mb-1">
+          <strong>Examples:</strong> "300 farmers adopt improved seeds; average yields increase from 2.1 to 2.7 tons/hectare; 15 new buyer contracts signed" • "45 certified midwives deployed; emergency referral time reduced by 40%; 200 safe deliveries recorded"
+        </div>
         <div className="text-sm text-gray-600 mb-1">
           <strong>Examples:</strong> "300 farmers adopt improved seeds; average yields increase from 2.1 to 2.7 tons/hectare; 15 new buyer contracts signed" • \"45 certified midwives deployed; emergency referral time reduced by 40%; 200 safe deliveries recorded"
         </div>

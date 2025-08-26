@@ -61,6 +61,9 @@ export default function Step2Problem() {
         <div className="text-sm text-gray-600 mb-1">
           <strong>Examples:</strong> "300 smallholder farmers in Nyabihu district have 40% lower maize yields than national average (MINAGRI 2023)" • "15 rural health centers lack skilled birth attendants, contributing to 25% higher maternal mortality rates"
         </div>
+        <div className="text-sm text-gray-600 mb-1">
+          <strong>Examples:</strong> "300 smallholder farmers in Nyabihu district have 40% lower maize yields than national average (MINAGRI 2023)" • "15 rural health centers lack skilled birth attendants, contributing to 25% higher maternal mortality rates"
+        </div>
         <textarea 
           className="textarea" 
           value={data.problemStatement} 
@@ -83,6 +86,9 @@ export default function Step2Problem() {
 
       <label className="field">
         <span className="label">Objectives</span>
+        <div className="text-sm text-gray-600 mb-1">
+          <strong>Examples:</strong> "Increase maize yields by 30% for 300 farmers within 18 months" • "Train 45 midwives and reduce maternal deaths by 20% in target centers by December 2025"
+        </div>
         <div className="text-sm text-gray-600 mb-1">
           <strong>Examples:</strong> "Increase maize yields by 30% for 300 farmers within 18 months" • "Train 45 midwives and reduce maternal deaths by 20% in target centers by December 2025"
         </div>
