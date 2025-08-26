@@ -10,7 +10,13 @@ export default function Step4Finalize() {
   const [err, setErr] = useState<string | null>(null);
   const [ok, setOk] = useState(false);
 
-  const canSubmit = Boolean(data.email && data.acknowledgeProtocols);
+  const [confirmAccuracy, setConfirmAccuracy] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [authorizeAnalysis, setAuthorizeAnalysis] = useState(false);
+
+  const canSubmit = Boolean(
+    data.email && confirmAccuracy && agreeTerms && authorizeAnalysis
+  );
 
   async function handleGenerateAnalysis() {
     try {
@@ -91,30 +97,21 @@ export default function Step4Finalize() {
       </label>
 
       <label className="checkbox">
-        <input
-          type="checkbox"
-          checked={data.shareAnon}
-          onChange={(e) => update({ shareAnon: e.target.checked })}
-        />
-        <span>Share anonymized data to improve the tool</span>
+        <input type="checkbox" checked={confirmAccuracy}
+               onChange={e => setConfirmAccuracy(e.target.checked)} />
+        <span>I confirm the information provided is accurate.</span>
       </label>
 
       <label className="checkbox">
-        <input
-          type="checkbox"
-          checked={data.ghostMode}
-          onChange={(e) => update({ ghostMode: e.target.checked })}
-        />
-        <span>Ghost mode (hide my email in logs)</span>
+        <input type="checkbox" checked={agreeTerms}
+               onChange={e => setAgreeTerms(e.target.checked)} />
+        <span>I agree to the terms and privacy policy.</span>
       </label>
 
       <label className="checkbox">
-        <input
-          type="checkbox"
-          checked={data.acknowledgeProtocols}
-          onChange={(e) => update({ acknowledgeProtocols: e.target.checked })}
-        />
-        <span>I acknowledge project protocols</span>
+        <input type="checkbox" checked={authorizeAnalysis}
+               onChange={e => setAuthorizeAnalysis(e.target.checked)} />
+        <span>I authorize generation of the analysis.</span>
       </label>
 
       {loading && <p className="intel-section">Submitting…</p>}

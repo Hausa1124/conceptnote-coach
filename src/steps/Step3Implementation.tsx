@@ -7,9 +7,54 @@ import { polishText } from "../utils/grammar";
 
 const wc = (s: string) => (s ? s.trim().split(/\s+/).filter(Boolean).length : 0);
 
+const SECTOR_EXAMPLES = {
+  Education: {
+    beneficiaries: "250 primary school teachers in 15 rural schools • 1,200 students in grades 1-3 across Musanze district",
+    activities: "Train 250 teachers on phonics-based reading methods; distribute 5,000 reading books; conduct monthly classroom observations",
+    expected: "250 teachers certified in new methods; 80% of grade 2 students read at level by end of year; 15 schools achieve literacy benchmarks"
+  },
+  Agriculture: {
+    beneficiaries: "300 smallholder farmers in 6 cooperatives • 1,800 household members in Nyabihu district",
+    activities: "Train 50 lead farmers on climate-smart techniques; establish 10 demonstration plots; conduct 24 monthly field visits",
+    expected: "300 farmers adopt improved seeds; average yields increase from 2.1 to 2.7 tons/hectare; 15 new buyer contracts signed"
+  },
+  Health: {
+    beneficiaries: "45 community health workers in 15 health centers • 12,000 women of reproductive age in target catchments",
+    activities: "Train 45 CHWs on maternal health protocols; distribute emergency birth kits to 15 centers; conduct quarterly supervision visits",
+    expected: "45 certified CHWs deployed; emergency referral time reduced by 40%; 200 safe deliveries recorded in target centers"
+  },
+  WASH: {
+    beneficiaries: "2,500 households in 8 villages • 15,000 community members lacking improved water access",
+    activities: "Construct 12 water points with solar pumps; train 24 water committee members; conduct hygiene education in 8 schools",
+    expected: "12 functional water systems serving 2,500 HH; water access time reduced to under 30 minutes; 80% practice handwashing"
+  },
+  "Economic Development": {
+    beneficiaries: "180 youth entrepreneurs aged 18-35 • 60 women's savings groups in peri-urban areas",
+    activities: "Deliver business skills training to 180 youth; provide startup grants to 120 participants; establish 12 market linkages",
+    expected: "120 new businesses launched; average monthly income increases by 40%; 60 savings groups mobilize $50,000 collectively"
+  },
+  Other: {
+    beneficiaries: "Target population in specified geographic area • Key stakeholder groups affected by the intervention",
+    activities: "Implement capacity building activities; establish systems and processes; conduct monitoring and evaluation",
+    expected: "Measurable improvements in target indicators; strengthened institutional capacity; sustainable behavior change"
+  }
+} as const;
+
 export default function Step3Implementation() {
   const { data, update } = useWizard();
   const nav = useNavigate();
+
+  // Sector-aware examples
+  const rawSector = (data?.sector ?? "").trim();
+  const sectorKey =
+    rawSector === "Economic Development" ||
+    rawSector === "Education" ||
+    rawSector === "Agriculture" ||
+    rawSector === "Health" ||
+    rawSector === "WASH"
+      ? (rawSector as const)
+      : "Other";
+  const examples = SECTOR_EXAMPLES[sectorKey];
 
   // Parse existing risks data safely
   const initial = data.risks ? data.risks.split(", ").filter(Boolean) : [];
@@ -81,6 +126,9 @@ export default function Step3Implementation() {
 
       <label className="field">
         <span className="label">Beneficiaries</span>
+        <div className="text-sm text-gray-600 mb-1">
+          <strong>Examples:</strong> {examples.beneficiaries}
+        </div>
         <textarea 
           className="textarea" 
           value={data.beneficiaries} 
@@ -105,10 +153,7 @@ export default function Step3Implementation() {
       <label className="field">
         <span className="label">Activities</span>
         <div className="text-sm text-gray-600 mb-1">
-          <strong>Examples:</strong> "Train 50 lead farmers on climate-smart techniques; establish 10 demonstration plots; conduct 24 monthly field visits" • "Deliver 6 training modules to 45 midwives; provide emergency kits to 15 health centers"
-        </div>
-        <div className="text-sm text-gray-600 mb-1">
-          <strong>Examples:</strong> "Train 50 lead farmers on climate-smart techniques; establish 10 demonstration plots; conduct 24 monthly field visits" • "Deliver 6 training modules to 45 midwives; provide emergency kits to 15 health centers"
+          <strong>Examples:</strong> {examples.activities}
         </div>
         <textarea 
           className="textarea" 
@@ -134,10 +179,7 @@ export default function Step3Implementation() {
       <label className="field">
         <span className="label">Expected Results</span>
         <div className="text-sm text-gray-600 mb-1">
-          <strong>Examples:</strong> "300 farmers adopt improved seeds; average yields increase from 2.1 to 2.7 tons/hectare; 15 new buyer contracts signed" • \"45 certified midwives deployed; emergency referral time reduced by 40%; 200 safe deliveries recorded"
-        </div>
-        <div className="text-sm text-gray-600 mb-1">
-          <strong>Examples:</strong> "300 farmers adopt improved seeds; average yields increase from 2.1 to 2.7 tons/hectare; 15 new buyer contracts signed" • \"45 certified midwives deployed; emergency referral time reduced by 40%; 200 safe deliveries recorded"
+          <strong>Examples:</strong> {examples.expected}
         </div>
         <textarea 
           className="textarea" 
