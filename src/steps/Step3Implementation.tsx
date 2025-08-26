@@ -21,16 +21,6 @@ export default function Step3Implementation() {
   const toggle = (r: string) =>
     setGridSel((arr) => (arr.includes(r) ? arr.filter((x) => x !== r) : [...arr, r]));
 
-  // --- local inline component to render a single examples row ---
-  const ExampleRow = ({ label, text }: { label: string; text?: string }) => {
-    if (!text) return null;
-    return (
-      <div className="mb-2 text-xs text-slate-300 dark:text-slate-300/90 bg-slate-800/30 border border-slate-700/60 rounded px-2 py-1">
-        <strong>Examples — {label}:</strong> <span>{text}</span>
-      </div>
-    );
-  };
-
   React.useEffect(() => {
     const list = [...gridSel];
     if (otherOn && otherText.trim()) list.push(otherText.trim());
@@ -46,7 +36,11 @@ export default function Step3Implementation() {
     <section className="section">
       <h2 className="pane-title">Step 3 — Implementation</h2>
 
-      <ExampleRow label="Beneficiaries" text={examples?.beneficiaries} />
+      {examples?.beneficiaries && (
+        <div className="mb-2 text-xs text-slate-300 dark:text-slate-300/90 bg-slate-800/30 border border-slate-700/60 rounded px-2 py-1">
+          <strong>Examples — Beneficiaries:</strong> <span>{examples.beneficiaries}</span>
+        </div>
+      )}
       <label className="field">
         <span className="label">Beneficiaries</span>
         <textarea 
@@ -70,7 +64,11 @@ export default function Step3Implementation() {
         </div>
       </label>
 
-      <ExampleRow label="Activities" text={examples?.activities} />
+      {examples?.activities && (
+        <div className="mb-2 text-xs text-slate-300 dark:text-slate-300/90 bg-slate-800/30 border border-slate-700/60 rounded px-2 py-1">
+          <strong>Examples — Activities:</strong> <span>{examples.activities}</span>
+        </div>
+      )}
       <label className="field">
         <span className="label">Activities</span>
         <textarea 
@@ -94,7 +92,11 @@ export default function Step3Implementation() {
         </div>
       </label>
 
-      <ExampleRow label="Expected Results" text={examples?.expected} />
+      {examples?.expected && (
+        <div className="mb-2 text-xs text-slate-300 dark:text-slate-300/90 bg-slate-800/30 border border-slate-700/60 rounded px-2 py-1">
+          <strong>Examples — Expected Results:</strong> <span>{examples.expected}</span>
+        </div>
+      )}
       <label className="field">
         <span className="label">Expected Results</span>
         <textarea 
