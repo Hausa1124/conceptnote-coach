@@ -11,10 +11,6 @@ export default function Step3Implementation() {
   const { data, update } = useWizard();
   const nav = useNavigate();
 
-  // Safely normalize incoming values
-  const safeArray = (v: unknown) => (Array.isArray(v) ? v : []);
-  const safeText = (v: unknown) => (typeof v === "string" ? v : "");
-
   // Parse existing risks data safely
   const initial = data.risks ? data.risks.split(", ").filter(Boolean) : [];
 
