@@ -45,15 +45,30 @@ export default function Step3Implementation() {
   const nav = useNavigate();
 
   // Sector-aware examples
+  // Allowed sector keys for examples
+  const SECTOR_KEYS = [
+    "Education",
+    "Agriculture",
+    "Health",
+    "WASH",
+    "Economic Development",
+    "Other"
+  ] as const;
+  type SectorKey = typeof SECTOR_KEYS[number];
+
+  // Normalize current sector to one of our keys
   const rawSector = (data?.sector ?? "").trim();
-  const sectorKey =
-    rawSector === "Economic Development" ||
-    rawSector === "Education" ||
-    rawSector === "Agriculture" ||
-    rawSector === "Health" ||
-    rawSector === "WASH"
-      ? (rawSector as const)
-      : "Other";
+  const sectorMap: Record<string, SectorKey> = {
+    Education: "Education",
+    Agriculture: "Agriculture",
+    Health: "Health",
+    WASH: "WASH",
+    "Economic Development": "Economic Development"
+  };
+  // If not recognized, fall back to "Other"
+  const sectorKey: SectorKey = sectorMap[rawSector] ?? "Other";
+
+  // Now safely index examples
   const examples = SECTOR_EXAMPLES[sectorKey];
 
   // Parse existing risks data safely
