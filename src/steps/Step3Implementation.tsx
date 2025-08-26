@@ -17,11 +17,14 @@ export default function Step3Implementation() {
   const [gridSel, setGridSel] = React.useState<string[]>(initial.filter(r => riskOptions.includes(r)));
   const [otherOn, setOtherOn] = React.useState<boolean>(initial.some(r => !riskOptions.includes(r)));
   const [otherText, setOtherText] = React.useState<string>(initial.find(r => !riskOptions.includes(r)) || "");
+  const [gridSel, setGridSel] = useState<string[]>(initial.filter(r => riskOptions.includes(r)));
+  const [otherOn, setOtherOn] = useState<boolean>(initial.some(r => !riskOptions.includes(r)));
+  const [otherText, setOtherText] = useState<string>(initial.find(r => !riskOptions.includes(r)) || "");
 
   const toggle = (r: string) =>
     setGridSel((arr) => (arr.includes(r) ? arr.filter((x) => x !== r) : [...arr, r]));
 
-  React.useEffect(() => {
+  useEffect(() => {
     const list = [...gridSel];
     if (otherOn && otherText.trim()) list.push(otherText.trim());
     update({ risks: list.join(", ") });

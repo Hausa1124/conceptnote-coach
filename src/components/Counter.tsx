@@ -1,5 +1,4 @@
 // src/components/Counter.tsx
-import React from "react";
 type Lims = { minWords:number; maxWords:number; minChars:number; maxChars:number };
 
 const wc = (s:string) => (s ? s.trim().split(/\s+/).filter(Boolean).length : 0);

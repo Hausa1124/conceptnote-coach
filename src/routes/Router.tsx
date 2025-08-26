@@ -1,5 +1,5 @@
-import React from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
+import Results from "@/components/Results";
 import WizardLayout from "../app/WizardLayout";
 import { WizardProvider } from "../app/WizardContext";
 import Step1Basics from "../steps/Step1Basics";
@@ -9,6 +9,7 @@ import Step4Finalize from "../steps/Step4Finalize";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/wizard/step-1" replace /> },
+  { path: "/results", element: <Results /> },
   {
     path: "/wizard",
     element: (

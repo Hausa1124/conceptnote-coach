@@ -4,7 +4,7 @@ export async function handler(event) {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
   try {
-    const res = await fetch("https://hook.us2.make.com/dut6k9qkr52gqon5plfkkflh3mqq6bfi", {
+    const res = await fetch(process.env.MAKE_WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

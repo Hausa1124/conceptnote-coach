@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWizard } from "../app/WizardContext";
 
@@ -11,6 +11,43 @@ export default function Step4Finalize() {
   const [ok, setOk] = useState(false);
 
   const canSubmit = Boolean(data.email && data.acknowledgeProtocols);
+
+  async function handleGenerateAnalysis() {
+    try {
+      const payload = {
+        title: data.title,
+        countryRegion: data.countryRegion,
+        organization: data.organization,
+        budget: data.budget,
+        duration: data.duration,
+        sector: data.sector,
+        problemStatement: data.problemStatement,
+        objectives: data.objectives,
+        beneficiaries: data.beneficiaries,
+        activities: data.activities,
+        expectedResults: data.expectedResults
+      };
+
+      const res = await fetch("/.netlify/functions/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const text = await res.text();
+
+      if (!res.ok) {
+        console.error("Submit error:", text);
+        alert("Submission failed. Please try again.");
+        return;
+      }
+
+      navigate(`/results?text=${encodeURIComponent(text)}`);
+    } catch (e) {
+      console.error(e);
+      alert("Network error. Please try again.");
+    }
+  }
 
   const submit = async () => {
     try {
@@ -85,6 +122,9 @@ export default function Step4Finalize() {
         </button>
         <button className="btn primary" type="button" disabled={!canSubmit || loading} onClick={submit}>
           Submit
+        </button>
+        <button className="btn primary" type="button" onClick={handleGenerateAnalysis}>
+          Generate Analysis
         </button>
       </div>
     </section>
