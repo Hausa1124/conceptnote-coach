@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useWizard } from "../app/WizardContext";
 import Counter from "../components/Counter";
 import { LIMITS } from "../utils/limits";
@@ -11,23 +11,73 @@ export default function Step3Implementation() {
   const { data, update } = useWizard();
   const nav = useNavigate();
 
-  // Risks with "Other"
-  const riskOptions = ["Funding", "Capacity", "Market", "Climate", "Compliance", "Logistics"];
+  // Safely normalize incoming values
+  const safeArray = (v: unknown) => (Array.isArray(v) ? v : []);
+  const safeText = (v: unknown) => (typeof v === "string" ? v : "");
+
+  // Parse existing risks data safely
   const initial = data.risks ? data.risks.split(", ").filter(Boolean) : [];
 
-  const toggle = (r: string) =>
-    setGridSel((arr) => (arr.includes(r) ? arr.filter((x) => x !== r) : [...arr, r]));
+  // Risk options that belong on this page
+  const riskOptions = ["Funding", "Capacity", "Market", "Climate", "Compliance", "Logistics"];
 
+  // Single source of state (no duplicates)
+  const [gridSel, setGridSel] = useState<string[]>(
+    initial.filter(r => riskOptions.includes(r))
+  );
+
+  const [otherOn, setOtherOn] = useState<boolean>(
+    initial.some(r => !riskOptions.includes(r))
+  );
+
+  const [otherText, setOtherText] = useState<string>(
+    initial.filter(r => !riskOptions.includes(r)).join(", ")
+  );
+
+  // Handlers (no undefined ops)
+  function toggleItem(item: string) {
+    setGridSel(prev =>
+      prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]
+    );
+  }
+
+  function handleOtherToggle(checked: boolean) {
+    setOtherOn(checked);
+    if (!checked) setOtherText("");
+  }
+
+  function handleOtherTextChange(v: string) {
+    setOtherText(v);
+  }
+
+  // Build the canonical risks array when saving/next
+  function buildRisks(): string[] {
+    const others = otherOn
+      ? otherText
+          .split(",")
+          .map(s => s.trim())
+          .filter(Boolean)
+      : [];
+    return [...gridSel, ...others];
+  }
+
+  // Update risks whenever state changes
   useEffect(() => {
-    const list = [...gridSel];
-    if (otherOn && otherText.trim()) list.push(otherText.trim());
-    update({ risks: list.join(", ") });
+    const risks = buildRisks();
+    update({ risks: risks.join(", ") });
   }, [gridSel, otherOn, otherText, update]);
 
   const canNext =
     wc(data.beneficiaries) > 0 &&
     wc(data.activities) > 0 &&
     wc(data.expectedResults) > 0;
+
+  // Save/Next wiring (no undefined writes)
+  function handleNext() {
+    const risks = buildRisks();
+    update({ risks: risks.join(", ") });
+    nav("/wizard/step-4");
+  }
 
   return (
     <section className="section">
@@ -104,12 +154,13 @@ export default function Step3Implementation() {
 
       <div className="field">
         <span className="label">Risks</span>
+        {/* Render (map safely) */}
         <div className="grid2">
-          {riskOptions.map(risk => (
+          {(riskOptions || []).map(risk => (
             <div 
               key={risk}
               className={`card example ${gridSel.includes(risk) ? 'selected' : ''}`}
-              onClick={() => toggle(risk)}
+              onClick={() => toggleItem(risk)}
               style={{ 
                 cursor: 'pointer',
                 backgroundColor: gridSel.includes(risk) ? '#0d162d' : '#0c1324',
@@ -121,7 +172,7 @@ export default function Step3Implementation() {
           ))}
           <div 
             className={`card example ${otherOn ? 'selected' : ''}`}
-            onClick={() => setOtherOn(v => !v)}
+            onClick={() => handleOtherToggle(!otherOn)}
             style={{ 
               cursor: 'pointer',
               backgroundColor: otherOn ? '#0d162d' : '#0c1324',
@@ -137,7 +188,7 @@ export default function Step3Implementation() {
             style={{ marginTop: 8 }}
             placeholder="Type other risk…"
             value={otherText}
-            onChange={(e) => setOtherText(e.target.value)}
+            onChange={(e) => handleOtherTextChange(e.target.value)}
           />
         )}
       </div>
@@ -152,7 +203,7 @@ export default function Step3Implementation() {
         <button 
           className="btn primary" 
           disabled={!canNext}
-          onClick={() => nav("/wizard/step-4")}
+          onClick={handleNext}
         >
           Next
         </button>
