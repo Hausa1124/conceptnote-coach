@@ -20,12 +20,8 @@ export default function Step4Finalize() {
         organization: data.organization,
         budget: data.budget,
         currency: data.currency,
-        currency: data.currency,
         duration: data.duration,
         sector: data.sector,
-        sectorOther: data.sectorOther,
-        donorChoice: data.donorChoice,
-        donorOther: data.donorOther,
         sectorOther: data.sectorOther,
         donorChoice: data.donorChoice,
         donorOther: data.donorOther,
@@ -34,8 +30,7 @@ export default function Step4Finalize() {
         beneficiaries: data.beneficiaries,
         activities: data.activities,
         expectedResults: data.expectedResults,
-        risks: data.risks
-        risks: data.risks
+        risks: data.risks ?? ""
       };
 
       const res = await fetch("/.netlify/functions/submit", {
