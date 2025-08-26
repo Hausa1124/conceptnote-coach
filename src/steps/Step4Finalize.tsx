@@ -19,13 +19,18 @@ export default function Step4Finalize() {
         countryRegion: data.countryRegion,
         organization: data.organization,
         budget: data.budget,
+        currency: data.currency,
         duration: data.duration,
         sector: data.sector,
+        sectorOther: data.sectorOther,
+        donorChoice: data.donorChoice,
+        donorOther: data.donorOther,
         problemStatement: data.problemStatement,
         objectives: data.objectives,
         beneficiaries: data.beneficiaries,
         activities: data.activities,
-        expectedResults: data.expectedResults
+        expectedResults: data.expectedResults,
+        risks: data.risks
       };
 
       const res = await fetch("/.netlify/functions/submit", {
