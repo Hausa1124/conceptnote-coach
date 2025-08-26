@@ -4,9 +4,38 @@ import { useWizard } from "../app/WizardContext";
 import Counter from "../components/Counter";
 import { LIMITS } from "../utils/limits";
 import { polishText } from "../utils/grammar";
-import { SECTOR_EXAMPLES, SectorKey } from "../utils/sectorExamples";
 
 const wc = (s: string) => (s ? s.trim().split(/\s+/).filter(Boolean).length : 0);
+
+type SectorKey = "Health" | "Education" | "WASH" | "Agriculture" | "Economic Development";
+
+const SECTOR_EXAMPLES: Record<SectorKey, {beneficiaries:string;activities:string;expected:string}> = {
+  Health: {
+    beneficiaries: "Pregnant women attending ANC; community health workers; newborns.",
+    activities: "Deliver 6 ANC modules to 45 midwives; supply 15 health centers with emergency kits.",
+    expected: "ANC visits increase by 30% within 12 months; 200 safe facility deliveries recorded."
+  },
+  Education: {
+    beneficiaries: "Grade 1–3 students; teachers; school administrators.",
+    activities: "Train 60 teachers in phonics; set up 10 reading corners; run monthly assessment clinics.",
+    expected: "Grade-3 literacy +20% in 12 months; attendance 85%."
+  },
+  WASH: {
+    beneficiaries: "Rural households; schoolchildren; water user committees.",
+    activities: "Rehabilitate 10 boreholes; train 20 WUCs; hygiene promotion to 2,000 HHs.",
+    expected: "1,500 HHs access safe water; handwashing ↑25%."
+  },
+  Agriculture: {
+    beneficiaries: "Smallholder farmers; cooperative leaders; local buyers.",
+    activities: "Train 50 lead farmers; establish 10 demo plots; conduct 24 field visits.",
+    expected: "300 farmers adopt improved seeds; yield 2.1→2.7 t/ha; 15 buyer contracts."
+  },
+  "Economic Development": {
+    beneficiaries: "Micro-entrepreneurs; youth groups; women-led SMEs.",
+    activities: "Deliver 8 business clinics; set up savings groups; link 20 SMEs to buyers.",
+    expected: "Sales +25%; 40 MSMEs financed; 60 jobs created."
+  }
+};
 
 export default function Step3Implementation() {
   const { data, update } = useWizard();
@@ -30,16 +59,15 @@ export default function Step3Implementation() {
 
   const rawSector = data.sector || "";
   const sectorMap: Record<string, SectorKey> = {
+    Health: "Health",
+    Education: "Education",
+    WASH: "WASH",
     "Agriculture": "Agriculture",
-    "Health": "Health", 
-    "Education": "Education",
-    "Environment": "Environment",
     "Economic Development": "Economic Development",
-    "Infrastructure": "Infrastructure",
-    "Social Services": "Social Services"
+    Other: "Economic Development"
   };
   const sectorKey: SectorKey = sectorMap[rawSector] ?? "Economic Development";
-  const examples = SECTOR_EXAMPLES[sectorKey];
+  const ex = SECTOR_EXAMPLES[sectorKey];
 
   const canNext =
     wc(data.beneficiaries) > 0 &&
@@ -50,9 +78,9 @@ export default function Step3Implementation() {
     <section className="section">
       <h2 className="pane-title">Step 3 — Implementation</h2>
 
-      {examples?.beneficiaries && (
+      {ex?.beneficiaries && (
         <div className="mb-2 text-xs text-slate-300 dark:text-slate-300/90 bg-slate-800/30 border border-slate-700/60 rounded px-2 py-1">
-          <strong>Examples — Beneficiaries:</strong> <span>{examples.beneficiaries}</span>
+          <strong>Examples — Beneficiaries:</strong> <span>{ex.beneficiaries}</span>
         </div>
       )}
       <label className="field">
@@ -78,9 +106,9 @@ export default function Step3Implementation() {
         </div>
       </label>
 
-      {examples?.activities && (
+      {ex?.activities && (
         <div className="mb-2 text-xs text-slate-300 dark:text-slate-300/90 bg-slate-800/30 border border-slate-700/60 rounded px-2 py-1">
-          <strong>Examples — Activities:</strong> <span>{examples.activities}</span>
+          <strong>Examples — Activities:</strong> <span>{ex.activities}</span>
         </div>
       )}
       <label className="field">
@@ -106,9 +134,9 @@ export default function Step3Implementation() {
         </div>
       </label>
 
-      {examples?.expected && (
+      {ex?.expected && (
         <div className="mb-2 text-xs text-slate-300 dark:text-slate-300/90 bg-slate-800/30 border border-slate-700/60 rounded px-2 py-1">
-          <strong>Examples — Expected Results:</strong> <span>{examples.expected}</span>
+          <strong>Examples — Expected Results:</strong> <span>{ex.expected}</span>
         </div>
       )}
       <label className="field">
