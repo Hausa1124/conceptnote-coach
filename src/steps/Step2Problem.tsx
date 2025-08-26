@@ -7,6 +7,34 @@ import Counter from "../components/Counter";
 import { LIMITS } from "../utils/limits";
 import { polishText } from "../utils/grammar";
 
+type SectorKey = "Health" | "Education" | "WASH" | "Agriculture" | "Economic Development";
+
+const STEP2_EXAMPLES: Record<
+  SectorKey,
+  { problem: string; objectives: string }
+> = {
+  Health: {
+    problem: "High maternal morbidity; poor ANC uptake; stockouts; long referral times.",
+    objectives: "Increase ANC uptake; strengthen CHW referrals; reduce stockouts."
+  },
+  Education: {
+    problem: "Low early-grade literacy; teacher shortages; weak assessment practices.",
+    objectives: "Improve reading in grades 1–3; train teachers; introduce regular assessment."
+  },
+  WASH: {
+    problem: "Nonfunctional boreholes; unsafe water; poor hygiene practices.",
+    objectives: "Restore water points; ensure safe water; promote handwashing."
+  },
+  Agriculture: {
+    problem: "Low yields; limited quality inputs; weak market linkages.",
+    objectives: "Adopt improved seeds; train lead farmers; connect to buyers."
+  },
+  "Economic Development": {
+    problem: "Low MSME sales; limited finance; weak business skills.",
+    objectives: "Business coaching; link to finance; grow monthly sales."
+  }
+};
+
 const words = (s: string) => (s ? s.trim().split(/\s+/).filter(Boolean).length : 0);
 
 function SmartMeter({ flags }: { flags: ReturnType<typeof evalSMART> }) {
@@ -50,12 +78,29 @@ export default function Step2Problem() {
     [data.objectives, data.problemStatement]
   );
 
+  const raw = (data?.sector ?? "").trim();
+  const map: Record<string, SectorKey> = {
+    Health: "Health",
+    Education: "Education",
+    WASH: "WASH",
+    Agriculture: "Agriculture",
+    "Economic Development": "Economic Development",
+    Other: "Economic Development"
+  };
+  const sectorKey: SectorKey = map[raw] ?? "Economic Development";
+  const ex2 = STEP2_EXAMPLES[sectorKey];
+
   const canNext = words(data.problemStatement) > 0 && words(data.objectives) > 0;
 
   return (
     <section className="section">
       <h2 className="pane-title">Step 2 — Problem</h2>
 
+      {ex2?.problem && (
+        <div className="mb-2 text-xs text-slate-300 bg-slate-800/40 border border-slate-700/60 rounded px-2 py-1">
+          <strong>Examples — Problem:</strong> <span>{ex2.problem}</span>
+        </div>
+      )}
       <label className="field">
         <span className="label">Problem Statement</span>
         <textarea 
@@ -78,6 +123,11 @@ export default function Step2Problem() {
         </div>
       </label>
 
+      {ex2?.objectives && (
+        <div className="mb-2 text-xs text-slate-300 bg-slate-800/40 border border-slate-700/60 rounded px-2 py-1">
+          <strong>Examples — Objectives:</strong> <span>{ex2.objectives}</span>
+        </div>
+      )}
       <label className="field">
         <span className="label">Objectives</span>
         <textarea 

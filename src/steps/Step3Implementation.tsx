@@ -210,6 +210,7 @@ export default function Step3Implementation() {
           Back
         </button>
         <button 
+          type="button"
           className="btn primary" 
           disabled={!canNext}
           onClick={() => nav("/wizard/step-4")}
