@@ -96,23 +96,34 @@ export default function Step4Finalize() {
         />
       </label>
 
-      <label className="checkbox">
-        <input type="checkbox" checked={confirmAccuracy}
-               onChange={e => setConfirmAccuracy(e.target.checked)} />
-        <span>I confirm the information provided is accurate.</span>
-      </label>
+      <div className="space-y-2">
+        <label className="flex items-center gap-2">
+          <input 
+            type="checkbox" 
+            checked={confirmAccuracy}
+            onChange={e => setConfirmAccuracy(e.target.checked)} 
+          />
+          <span>I confirm the information provided is accurate.</span>
+        </label>
 
-      <label className="checkbox">
-        <input type="checkbox" checked={agreeTerms}
-               onChange={e => setAgreeTerms(e.target.checked)} />
-        <span>I agree to the terms and privacy policy.</span>
-      </label>
+        <label className="flex items-center gap-2">
+          <input 
+            type="checkbox" 
+            checked={agreeTerms}
+            onChange={e => setAgreeTerms(e.target.checked)} 
+          />
+          <span>I agree to the terms and privacy policy.</span>
+        </label>
 
-      <label className="checkbox">
-        <input type="checkbox" checked={authorizeAnalysis}
-               onChange={e => setAuthorizeAnalysis(e.target.checked)} />
-        <span>I authorize generation of the analysis.</span>
-      </label>
+        <label className="flex items-center gap-2">
+          <input 
+            type="checkbox" 
+            checked={authorizeAnalysis}
+            onChange={e => setAuthorizeAnalysis(e.target.checked)} 
+          />
+          <span>I authorize generation of the analysis.</span>
+        </label>
+      </div>
 
       {loading && <p className="intel-section">Submitting…</p>}
       {err && <p className="intel-section">Error: {err}</p>}
@@ -122,10 +133,7 @@ export default function Step4Finalize() {
         <button className="btn" type="button" onClick={() => navigate("/wizard/step-3")}>
           Back
         </button>
-        <button className="btn primary" type="button" disabled={!canSubmit || loading} onClick={submit}>
-          Submit
-        </button>
-        <button className="btn primary" type="button" onClick={handleGenerateAnalysis}>
+        <button className="btn primary" type="button" disabled={!canSubmit || loading} onClick={handleGenerateAnalysis}>
           Generate Analysis
         </button>
       </div>
