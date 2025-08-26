@@ -14,9 +14,6 @@ export default function Step3Implementation() {
   // Risks with "Other"
   const riskOptions = ["Funding", "Capacity", "Market", "Climate", "Compliance", "Logistics"];
   const initial = data.risks ? data.risks.split(", ").filter(Boolean) : [];
-  const [gridSel, setGridSel] = useState<string[]>(initial.filter(r => riskOptions.includes(r)));
-  const [otherOn, setOtherOn] = useState<boolean>(initial.some(r => !riskOptions.includes(r)));
-  const [otherText, setOtherText] = useState<string>(initial.find(r => !riskOptions.includes(r)) || "");
 
   const toggle = (r: string) =>
     setGridSel((arr) => (arr.includes(r) ? arr.filter((x) => x !== r) : [...arr, r]));
