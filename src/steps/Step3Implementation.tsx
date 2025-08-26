@@ -66,10 +66,15 @@ export default function Step3Implementation() {
     "Economic Development": "Economic Development"
   };
   // If not recognized, fall back to "Other"
-  const sectorKey: SectorKey = sectorMap[rawSector] ?? "Other";
+  const sectorKey: SectorKey = sectorMap[rawSector] ?? "Economic Development";
 
   // Now safely index examples
   const examples = SECTOR_EXAMPLES[sectorKey];
+
+  // Temporary debug - remove before final commit
+  console.debug("[Step3] sector:", data.sector);
+  console.debug("[Step3] normalized:", sectorKey);
+  console.debug("[Step3] examples:", examples);
 
   // Parse existing risks data safely
   const initial = data.risks ? data.risks.split(", ").filter(Boolean) : [];
