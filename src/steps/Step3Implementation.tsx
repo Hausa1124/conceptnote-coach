@@ -4,6 +4,7 @@ import { useWizard } from "../app/WizardContext";
 import Counter from "../components/Counter";
 import { LIMITS } from "../utils/limits";
 import { polishText } from "../utils/grammar";
+import { SECTOR_EXAMPLES, SectorKey } from "../utils/sectorExamples";
 
 const wc = (s: string) => (s ? s.trim().split(/\s+/).filter(Boolean).length : 0);
 
@@ -26,6 +27,19 @@ export default function Step3Implementation() {
     if (otherOn && otherText.trim()) list.push(otherText.trim());
     update({ risks: list.join(", ") });
   }, [gridSel, otherOn, otherText, update]);
+
+  const rawSector = data.sector || "";
+  const sectorMap: Record<string, SectorKey> = {
+    "Agriculture": "Agriculture",
+    "Health": "Health", 
+    "Education": "Education",
+    "Environment": "Environment",
+    "Economic Development": "Economic Development",
+    "Infrastructure": "Infrastructure",
+    "Social Services": "Social Services"
+  };
+  const sectorKey: SectorKey = sectorMap[rawSector] ?? "Economic Development";
+  const examples = SECTOR_EXAMPLES[sectorKey];
 
   const canNext =
     wc(data.beneficiaries) > 0 &&
