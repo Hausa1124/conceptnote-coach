@@ -74,6 +74,14 @@ export default function Step3Implementation() {
     wc(data.activities) > 0 &&
     wc(data.expectedResults) > 0;
 
+  // Debug navigation timeline
+  const handleNext = () => {
+    console.log('BEFORE CLICK:', window.location.pathname);
+    nav("step-4", { relative: "route" });
+    setTimeout(() => console.log('AFTER 0ms:', window.location.pathname), 0);
+    setTimeout(() => console.log('AFTER 200ms:', window.location.pathname), 200);
+  };
+
   return (
     <section className="section">
       <h2 className="pane-title">Step 3 — Implementation</h2>
@@ -213,7 +221,7 @@ export default function Step3Implementation() {
           type="button"
           className="btn primary" 
           disabled={!canNext}
-          onClick={() => nav("step-4", { relative: "route" })}
+          onClick={handleNext}
         >
           Next
         </button>
