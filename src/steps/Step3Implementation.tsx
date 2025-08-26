@@ -138,7 +138,7 @@ export default function Step3Implementation() {
       <label className="field">
         <span className="label">Expected Results</span>
         <div className="text-sm text-gray-600 mb-1">
-          <strong>Examples:</strong> "300 farmers adopt improved seeds; average yields increase from 2.1 to 2.7 tons/hectare; 15 new buyer contracts signed" • "45 certified midwives deployed; emergency referral time reduced by 40%; 200 safe deliveries recorded"
+          <strong>Examples:</strong> "300 farmers adopt improved seeds; average yields increase from 2.1 to 2.7 tons/hectare; 15 new buyer contracts signed" • \"45 certified midwives deployed; emergency referral time reduced by 40%; 200 safe deliveries recorded"
         </div>
         <div className="text-sm text-gray-600 mb-1">
           <strong>Examples:</strong> "300 farmers adopt improved seeds; average yields increase from 2.1 to 2.7 tons/hectare; 15 new buyer contracts signed" • \"45 certified midwives deployed; emergency referral time reduced by 40%; 200 safe deliveries recorded"
