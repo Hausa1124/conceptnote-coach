@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWizard } from "../app/WizardContext";
 import { getStep2Guidance } from "../utils/nudges";

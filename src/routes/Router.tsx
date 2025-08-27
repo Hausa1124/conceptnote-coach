@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import WizardLayout from "../app/WizardLayout";
 import { WizardProvider } from "../app/WizardContext";

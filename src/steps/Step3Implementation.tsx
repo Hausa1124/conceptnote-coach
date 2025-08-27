@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWizard } from "../app/WizardContext";
 import Counter from "../components/Counter";
@@ -44,14 +44,14 @@ export default function Step3Implementation() {
   // Risks with "Other"
   const riskOptions = ["Funding", "Capacity", "Market", "Climate", "Compliance", "Logistics"];
   const initial = data.risks ? data.risks.split(", ").filter(Boolean) : [];
-  const [gridSel, setGridSel] = React.useState<string[]>(initial.filter(r => riskOptions.includes(r)));
-  const [otherOn, setOtherOn] = React.useState<boolean>(initial.some(r => !riskOptions.includes(r)));
-  const [otherText, setOtherText] = React.useState<string>(initial.find(r => !riskOptions.includes(r)) || "");
+  const [gridSel, setGridSel] = useState<string[]>(initial.filter(r => riskOptions.includes(r)));
+  const [otherOn, setOtherOn] = useState<boolean>(initial.some(r => !riskOptions.includes(r)));
+  const [otherText, setOtherText] = useState<string>(initial.find(r => !riskOptions.includes(r)) || "");
 
   const toggle = (r: string) =>
     setGridSel((arr) => (arr.includes(r) ? arr.filter((x) => x !== r) : [...arr, r]));
 
-  React.useEffect(() => {
+  useEffect(() => {
     const list = [...gridSel];
     if (otherOn && otherText.trim()) list.push(otherText.trim());
     update({ risks: list.join(", ") });
@@ -77,7 +77,7 @@ export default function Step3Implementation() {
   // Debug navigation timeline
   const handleNext = () => {
     console.log('BEFORE CLICK:', window.location.pathname);
-    nav("step-4", { relative: "route" });
+    nav("/wizard/step-4");
     setTimeout(() => console.log('AFTER 0ms:', window.location.pathname), 0);
     setTimeout(() => console.log('AFTER 200ms:', window.location.pathname), 200);
   };
@@ -221,7 +221,7 @@ export default function Step3Implementation() {
           type="button"
           className="btn primary" 
           disabled={!canNext}
-          onClick={() => nav("step-4", { relative: "route" })}
+          onClick={handleNext}
         >
           Next
         </button>

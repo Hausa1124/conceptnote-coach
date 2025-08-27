@@ -1,4 +1,3 @@
-import React from "react";
 import { useWizard } from "../app/WizardContext";
 
 export default function LivePreview() {
