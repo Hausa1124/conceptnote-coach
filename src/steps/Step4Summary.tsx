@@ -2,12 +2,57 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWizard } from "../context/WizardContext";
 import TextArea from "../components/TextArea";
+import ChipGroup from "../components/ChipGroup";
+
+const RISK_OPTS = [
+  "Weather/climate shocks (floods/drought)",
+  "Market volatility (price swings, demand shifts)",
+  "Delays in inputs/logistics (seed, tools, transport)",
+  "Partner coordination gaps (roles, timelines)",
+  "Low participant uptake/attendance",
+  "Compliance/permits & reporting slippage"
+];
+
+const MIT_OPTS = [
+  "Seasonal scheduling & buffer time",
+  "Diversify buyers & forward agreements",
+  "Backup suppliers & local stock",
+  "Clear MOUs & weekly stand-ups",
+  "Early mobilization & incentive nudges",
+  "Compliance calendar & owner assigned"
+];
 
 export default function Step4Summary() {
   const { data, update, reset } = useWizard();
   const nav = useNavigate();
+  const [risksSel, setRisksSel] = useState<string[]>([]);
+  const [mitSel, setMitSel] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  const joinUnique = (base: string, picks: string[]) => {
+    const tokens = (base || "")
+      .split(/\s*;\s*/)
+      .filter(Boolean);
+    const set = new Set([...tokens, ...picks]);
+    return Array.from(set).join("; ");
+  };
+
+  const handleRiskToggle = (opt: string) => {
+    setRisksSel(prev => {
+      const next = prev.includes(opt) ? prev.filter(x => x !== opt) : [...prev, opt];
+      update({ risks: joinUnique(data.risks, next) });
+      return next;
+    });
+  };
+
+  const handleMitToggle = (opt: string) => {
+    setMitSel(prev => {
+      const next = prev.includes(opt) ? prev.filter(x => x !== opt) : [...prev, opt];
+      update({ mitigations: joinUnique(data.mitigations, next) });
+      return next;
+    });
+  };
 
   const hasRequiredFields =
     (data.title?.trim()) &&
@@ -56,22 +101,34 @@ export default function Step4Summary() {
     <div>
       <h2>Step 4 — Review & Analysis</h2>
       
+      <ChipGroup
+        options={RISK_OPTS}
+        selected={risksSel}
+        onToggle={handleRiskToggle}
+        label="Quick-pick risks (click to add/remove):"
+      />
       <TextArea
         label="Risks"
-        value={data.risks}
+        value={data.risks || ""}
         onChange={(v) => update({ risks: v })}
         wordTarget={100}
         charTarget={800}
-        placeholder="Top 3–5 risks (operational, market, compliance)."
+        placeholder="Top 3–5 risks (operational, market, compliance). Separate by semicolons."
       />
 
+      <ChipGroup
+        options={MIT_OPTS}
+        selected={mitSel}
+        onToggle={handleMitToggle}
+        label="Quick-pick mitigations (click to add/remove):"
+      />
       <TextArea
         label="Mitigations"
-        value={data.mitigations}
+        value={data.mitigations || ""}
         onChange={(v) => update({ mitigations: v })}
-        wordTarget={100}
+        wordTarget={120}
         charTarget={800}
-        placeholder="How you will reduce each risk."
+        placeholder="How you will reduce each risk. Separate by semicolons."
       />
 
       <div style={{ marginTop: 16 }}>

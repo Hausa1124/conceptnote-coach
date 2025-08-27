@@ -37,6 +37,14 @@ export default function LivePreview() {
         </section>
       )}
 
+      {(data.risks || data.mitigations) && (
+        <section style={{ marginBottom: 16 }}>
+          <h3>4) Risk Management</h3>
+          <p><strong>Risks:</strong> {data.risks || "—"}</p>
+          <p><strong>Mitigations:</strong> {data.mitigations || "—"}</p>
+        </section>
+      )}
+
       <section>
         <h3>Summary Snippet</h3>
         <p>
