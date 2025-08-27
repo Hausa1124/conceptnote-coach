@@ -15,11 +15,10 @@ export default function App() {
     <div
       style={{
         display: isResultsPage ? "block" : "grid",
-        gridTemplateColumns: isResultsPage ? "1fr" : "40% 60%",
+        gridTemplateColumns: isResultsPage ? "1fr" : "1fr 1.5fr",
         columnGap: 0,
         height: "100vh",
         width: "100%",
-        minWidth: 900,
         overflow: "hidden"
       }}
     >
