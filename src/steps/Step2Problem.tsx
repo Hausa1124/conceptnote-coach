@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useWizard } from "../context/WizardContext";
 import TextArea from "../components/TextArea";
 import SmartMeter from "../components/SmartMeter";
-import SmartMeter from "../components/SmartMeter";
 
 export default function Step2Problem() {
   const { data, update } = useWizard();
