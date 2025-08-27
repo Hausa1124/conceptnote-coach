@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { EMPTY_DATA, WizardData } from "../types";
 
+const STORAGE_KEY = "cnc-draft-v1";
+
 type Ctx = {
   data: WizardData;
   update: (patch: Partial<WizardData>) => void;
@@ -11,20 +13,29 @@ const WizardCtx = createContext<Ctx | null>(null);
 
 export const WizardProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<WizardData>(EMPTY_DATA);
-  
-  // load draft on mount
+
+  // restore
   useEffect(() => {
-    const raw = localStorage.getItem("cnc-draft");
-    if (raw) setData(JSON.parse(raw));
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) setData(JSON.parse(raw));
+    } catch {
+      // ignore parse errors; keep EMPTY_DATA
+    }
   }, []);
 
-  // autosave on change
+  // autosave
   useEffect(() => {
-    localStorage.setItem("cnc-draft", JSON.stringify(data));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch {
+      // quota/full storage -> ignore silently
+    }
   }, [data]);
 
   const update = (patch: Partial<WizardData>) => setData((d) => ({ ...d, ...patch }));
-  const reset = () => setData(EMPTY_DATA);
+  const reset = () => { setData(EMPTY_DATA); localStorage.removeItem(STORAGE_KEY); };
+
   return <WizardCtx.Provider value={{ data, update, reset }}>{children}</WizardCtx.Provider>;
 };
 

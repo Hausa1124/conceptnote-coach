@@ -13,7 +13,8 @@ export default function LivePreview() {
         <p><strong>Organization:</strong> {data.organization || "—"}</p>
         <p><strong>Region:</strong> {data.countryRegion || "—"}</p>
         <p><strong>Budget & Duration:</strong> {data.budget || "—"} • {data.duration || "—"}</p>
-        <p><strong>Sector/Donor:</strong> {(data.sector || "—") + (data.sector === "Other" && data.sectorOther ? ` (${data.sectorOther})` : "")} • {(data.donorChoice || "—") + (data.donorChoice === "Other" && data.donorOther ? ` (${data.donorOther})` : "")}</p>
+        <p><strong>Sector:</strong> {(data.sector || "—") + (data.sector === "Other" && data.sectorOther ? ` (${data.sectorOther})` : "")}</p>
+        <p><strong>Donor:</strong> {(data.donorChoice || "—") + (data.donorChoice === "Other" && data.donorOther ? ` (${data.donorOther})` : "")}</p>
       </section>
 
       <section style={{ marginBottom: 16 }}>
@@ -23,19 +24,11 @@ export default function LivePreview() {
       </section>
 
       <section style={{ marginBottom: 16 }}>
-        <h3>3) Beneficiaries, Activities, Expected Results</h3>
+        <h3>3) Implementation</h3>
         <p><strong>Beneficiaries:</strong> {data.beneficiaries || "—"}</p>
         <p><strong>Activities:</strong> {data.activities || "—"}</p>
         <p><strong>Expected Results:</strong> {data.expected || "—"}</p>
       </section>
-
-      {(data.risks || data.mitigations) && (
-        <section style={{ marginBottom: 16 }}>
-          <h3>4) Risk Management</h3>
-          <p><strong>Risks:</strong> {data.risks || "—"}</p>
-          <p><strong>Mitigations:</strong> {data.mitigations || "—"}</p>
-        </section>
-      )}
 
       {(data.risks || data.mitigations) && (
         <section style={{ marginBottom: 16 }}>

@@ -1,7 +1,38 @@
 * { box-sizing: border-box; }
+
+/* Ensure the app can occupy full height */
 html, body, #root { height: 100%; margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
 label { display:block; font-size: 14px; color:#111827; margin-bottom: 4px; }
 
+/* Root layout */
+.cnc-root {
+  display: grid;
+  grid-template-columns: minmax(360px, 1fr) minmax(480px, 1.5fr); /* ≈40/60 with sensible mins */
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Left & Right panes */
+.cnc-left {
+  padding: 16px;
+  border-right: 1px solid #E5E7EB;
+  overflow: auto;
+}
+.cnc-right {
+  padding: 16px;
+  background: #FAFAFA;
+  overflow: auto;
+}
+
+/* Mobile: stack panes */
 @media (max-width: 768px) {
-  #root > div { display: block !important; height: auto; }
+  .cnc-root {
+    display: block;
+    height: auto;
+  }
+  .cnc-left, .cnc-right {
+    height: auto;
+  }
 }

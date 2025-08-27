@@ -11,50 +11,41 @@ export default function App() {
   const location = window.location.pathname;
   const isResultsPage = location === '/results';
 
+  if (isResultsPage) {
+    return (
+      <Routes>
+        <Route path="/results" element={<Results />} />
+      </Routes>
+    );
+  }
+
   return (
-    <div
-      style={{
-        display: isResultsPage ? "block" : "grid",
-        gridTemplateColumns: isResultsPage ? "1fr" : "1fr 1.5fr",
-        gap: 0,
-        height: "100vh",
-        width: "100%",
-        overflow: "hidden"
-      }}
-    >
-      {isResultsPage ? (
+    <div className="cnc-root">
+      {/* Left pane */}
+      <div className="cnc-left">
+        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <h1 style={{ fontSize: 18, fontWeight: 800 }}>Concept Note Wizard</h1>
+          <nav style={{ display: "flex", gap: 8 }}>
+            <Link to="/step1">1</Link>
+            <Link to="/step2">2</Link>
+            <Link to="/step3">3</Link>
+            <Link to="/step4">4</Link>
+          </nav>
+        </header>
+
         <Routes>
-          <Route path="/results" element={<Results />} />
+          <Route path="/step1" element={<Step1Basics />} />
+          <Route path="/step2" element={<Step2Problem />} />
+          <Route path="/step3" element={<Step3Implementation />} />
+          <Route path="/step4" element={<Step4Summary />} />
+          <Route path="*" element={<Step1Basics />} />
         </Routes>
-      ) : (
-        <>
-          {/* Left Pane: Wizard */}
-          <div style={{ padding: 16, borderRight: "1px solid #E5E7EB", overflow: "auto" }}>
-            <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-              <h1 style={{ fontSize: 18, fontWeight: 800 }}>Concept Note Wizard</h1>
-              <nav style={{ display: "flex", gap: 8 }}>
-                <Link to="/step1">1</Link>
-                <Link to="/step2">2</Link>
-                <Link to="/step3">3</Link>
-                <Link to="/step4">4</Link>
-              </nav>
-            </header>
+      </div>
 
-            <Routes>
-              <Route path="/step1" element={<Step1Basics />} />
-              <Route path="/step2" element={<Step2Problem />} />
-              <Route path="/step3" element={<Step3Implementation />} />
-              <Route path="/step4" element={<Step4Summary />} />
-              <Route path="*" element={<Step1Basics />} />
-            </Routes>
-          </div>
-
-          {/* Right Pane: Live Preview */}
-          <div style={{ overflow: "auto", background: "#FAFAFA", padding: 16 }}>
-            <LivePreview />
-          </div>
-        </>
-      )}
+      {/* Right pane */}
+      <div className="cnc-right">
+        <LivePreview />
+      </div>
     </div>
   );
 }
