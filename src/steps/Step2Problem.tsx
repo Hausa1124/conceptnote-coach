@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useWizard } from "../context/WizardContext";
 import TextArea from "../components/TextArea";
+import SmartMeter from "../components/SmartMeter";
 
 export default function Step2Problem() {
   const { data, update } = useWizard();
@@ -16,7 +17,7 @@ export default function Step2Problem() {
         onChange={(v) => update({ problemStatement: v })}
         wordTarget={120}
         charTarget={900}
-        placeholder="What problem are you addressing? Who is affected? Evidence?"
+        placeholder="What problem? Who is affected? Evidence?"
       />
 
       <TextArea
@@ -25,8 +26,12 @@ export default function Step2Problem() {
         onChange={(v) => update({ objectives: v })}
         wordTarget={80}
         charTarget={600}
-        placeholder="List 2–4 SMART objectives."
+        placeholder="State SMART objectives (who/what/how many/by when)."
       />
+      <div style={{ fontSize: 12, color: "#6c757d", marginBottom: 8 }}>
+        Use SMART. Ex: 'Train 50 lead farmers by Dec; yields +20%.'
+      </div>
+      <SmartMeter text={data.objectives} />
 
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>
         <button onClick={() => nav("/step1")} style={btn}>← Back</button>

@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useWizard } from "../context/WizardContext";
 import TextArea from "../components/TextArea";
+import ExampleBox from "../components/ExampleBox";
 import { SectorKey } from "../types";
 
 const SECTOR_EXAMPLES: Record<SectorKey, { beneficiaries: string; activities: string; expected: string }> = {
@@ -48,31 +49,34 @@ export default function Step3Implementation() {
     <div>
       <h2>Step 3 — Implementation</h2>
 
+      <ExampleBox title="Beneficiaries" content={examples.beneficiaries} />
       <TextArea
         label="Beneficiaries"
         value={data.beneficiaries}
         onChange={(v) => update({ beneficiaries: v })}
         wordTarget={80}
         charTarget={600}
-        placeholder={examples.beneficiaries || "Who, where, how many."}
+        placeholder="Who, where, how many."
       />
 
+      <ExampleBox title="Activities" content={examples.activities} />
       <TextArea
         label="Activities"
         value={data.activities}
         onChange={(v) => update({ activities: v })}
         wordTarget={150}
         charTarget={1100}
-        placeholder={examples.activities || "Start each line with a verb."}
+        placeholder="Start each line with a verb."
       />
 
+      <ExampleBox title="Expected Results" content={examples.expected} />
       <TextArea
         label="Expected Results"
         value={data.expected}
         onChange={(v) => update({ expected: v })}
         wordTarget={100}
         charTarget={800}
-        placeholder={examples.expected || "Quantify where possible."}
+        placeholder="Quantify where possible."
       />
 
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>

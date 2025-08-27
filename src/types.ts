@@ -23,6 +23,13 @@ export type WizardData = {
   beneficiaries: string;
   activities: string;
   expected: string;
+
+  // Step 4
+  risks: string;
+  mitigations: string;
+  consentConfirmAccuracy: boolean;
+  consentDataProcessing: boolean;
+  consentAnonymizeOutputs: boolean;
 };
 
 export const EMPTY_DATA: WizardData = {
@@ -40,4 +47,9 @@ export const EMPTY_DATA: WizardData = {
   beneficiaries: "",
   activities: "",
   expected: "",
+  risks: "",
+  mitigations: "",
+  consentConfirmAccuracy: false,
+  consentDataProcessing: false,
+  consentAnonymizeOutputs: false,
 };

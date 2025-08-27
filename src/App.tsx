@@ -4,11 +4,25 @@ import Step1Basics from "./steps/Step1Basics";
 import Step2Problem from "./steps/Step2Problem";
 import Step3Implementation from "./steps/Step3Implementation";
 import Step4Summary from "./steps/Step4Summary";
+import Results from "./pages/Results";
 import LivePreview from "./components/LivePreview";
 
 export default function App() {
+  const location = window.location.pathname;
+  const isResultsPage = location === '/results';
+
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(300px, 680px) 1fr", height: "100vh" }}>
+    <div style={{ 
+      display: isResultsPage ? "block" : "grid", 
+      gridTemplateColumns: isResultsPage ? "1fr" : "minmax(300px, 680px) 1fr", 
+      height: "100vh" 
+    }}>
+      {isResultsPage ? (
+        <Routes>
+          <Route path="/results" element={<Results />} />
+        </Routes>
+      ) : (
+        <>
       {/* Left Pane: Wizard */}
       <div style={{ padding: 16, borderRight: "1px solid #E5E7EB", overflow: "auto" }}>
         <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -34,6 +48,8 @@ export default function App() {
       <div style={{ overflow: "auto", background: "#FAFAFA" }}>
         <LivePreview />
       </div>
+        </>
+      )}
     </div>
   );
 }

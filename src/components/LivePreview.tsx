@@ -29,8 +29,16 @@ export default function LivePreview() {
         <p><strong>Expected Results:</strong> {data.expected || "—"}</p>
       </section>
 
+      {(data.risks || data.mitigations) && (
+        <section style={{ marginBottom: 16 }}>
+          <h3>4) Risk Management</h3>
+          <p><strong>Risks:</strong> {data.risks || "—"}</p>
+          <p><strong>Mitigations:</strong> {data.mitigations || "—"}</p>
+        </section>
+      )}
+
       <section>
-        <h3>4) Summary Snippet</h3>
+        <h3>Summary Snippet</h3>
         <p>
           {(data.title || "Project")} will support {(data.beneficiaries || "target groups")} in {(data.countryRegion || "the region")} via
           activities such as {(data.activities || "key interventions")}, aiming for {(data.expected || "measurable improvements")}.
