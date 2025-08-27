@@ -1,47 +1,79 @@
 import React from "react";
 
 type Props = {
-  text: string;
+  text: string;                 // the Objectives text to analyze
+  sector?: string;              // optional, improves R check
+  region?: string;              // optional, improves R check
 };
 
-const SMART_PATTERNS = {
-  S: /\b(farmers|midwives|training|deliver|women|youth|students|teachers|households|communities|beneficiaries|target|group)\b/i,
-  M: /(\d+|%|increase by|reduce by|improve by|\+\d+|-\d+|≥|≤|>|<)/i,
-  A: /\b(train|deliver|establish|set up|create|build|develop|implement|provide|support|conduct|organize)\b/i,
-  R: /\b(health|education|wash|agriculture|economic|development|co-ops|msmes|rural|urban|district|region|country|community)\b/i,
-  T: /\b(days?|weeks?|months?|years?|by q[1-4]|by \w+ \d{4}|within \d+|deadline|timeline|phase|term)\b/i,
+const hasSpecific = (t: string) => {
+  // S — mentions a concrete target/who/what
+  const whoWhatWords = [
+    "farmers","midwives","students","co-ops","cooperatives","msmes","smes","youth","women",
+    "households","buyers","schools","clinics","health centers","lead farmers","teachers"
+  ];
+  const anyWho = new RegExp(`\\b(${whoWhatWords.join("|")})\\b`, "i").test(t);
+  const hasDeliverable = /\b(train|deliver|establish|set up|rehabilitate|link|coach|provide|supply)\b/i.test(t);
+  return anyWho || hasDeliverable;
 };
 
-export default function SmartMeter({ text }: Props) {
-  const checkSmart = (pattern: RegExp) => pattern.test(text);
+const hasMeasurable = (t: string) => {
+  // M — numbers, %, counts, deltas
+  return /(\b\d+\b|%|percent|increase|decrease|reduce|raise|grow|improve)/i.test(t);
+};
+
+const hasActionable = (t: string) => {
+  // A — starts lines with verbs (quick heuristic)
+  return /(^|\n)\s*(train|deliver|establish|set up|rehabilitate|link|coach|provide|supply|organize|conduct|develop)\b/i.test(t);
+};
+
+const hasRelevant = (t: string, sector?: string, region?: string) => {
+  // R — references sector/context terms
+  const sectorHit = sector ? new RegExp(sector, "i").test(t) : false;
+  const regionHit = region ? new RegExp(region, "i").test(t) : false;
+  const contextWords = /\b(agriculture|health|education|wash|economic development|nyabihu|gakenke|rwanda|district|co-ops?|buyers?)\b/i.test(t);
+  return sectorHit || regionHit || contextWords;
+};
+
+const hasTimebound = (t: string) => {
+  // T — time bounds
+  return /\b(by|within|before|after)\s+(\d{4}|q[1-4]|jan(uary)?|feb(ruary)?|mar(ch)?|apr(il)?|may|jun(e)?|jul(y)?|aug(ust)?|sep(t)?(ember)?|oct(ober)?|nov(ember)?|dec(ember)?|\d+\s*(days?|weeks?|months?))\b/i.test(t);
+};
+
+export default function SmartMeter({ text, sector, region }: Props) {
+  const S = hasSpecific(text);
+  const M = hasMeasurable(text);
+  const A = hasActionable(text);
+  const R = hasRelevant(text, sector, region);
+  const T = hasTimebound(text);
+
+  const chip = (label: string, on: boolean) => (
+    <span
+      key={label}
+      title={label}
+      style={{
+        display: "inline-block",
+        padding: "4px 8px",
+        borderRadius: 999,
+        border: `2px solid ${on ? "#10B981" : "#D1D5DB"}`,  // green when satisfied
+        fontSize: 12,
+        fontWeight: 700,
+        marginRight: 6,
+        marginTop: 4,
+        background: on ? "rgba(16,185,129,0.08)" : "white"
+      }}
+    >
+      {label}
+    </span>
+  );
 
   return (
-    <div style={{ 
-      display: "flex", 
-      gap: 8, 
-      marginTop: 8, 
-      padding: "8px 12px", 
-      background: "#f8f9fa", 
-      borderRadius: 6,
-      border: "1px solid #e9ecef"
-    }}>
-      <span style={{ fontSize: 12, color: "#6c757d", marginRight: 8 }}>SMART:</span>
-      {Object.entries(SMART_PATTERNS).map(([letter, pattern]) => (
-        <span
-          key={letter}
-          style={{
-            padding: "2px 6px",
-            borderRadius: 4,
-            fontSize: 11,
-            fontWeight: 600,
-            background: checkSmart(pattern) ? "#28a745" : "#e9ecef",
-            color: checkSmart(pattern) ? "white" : "#6c757d",
-            border: `1px solid ${checkSmart(pattern) ? "#28a745" : "#dee2e6"}`,
-          }}
-        >
-          {letter}
-        </span>
-      ))}
+    <div style={{ marginTop: 8 }}>
+      <div style={{ fontSize: 12, color: "#374151", marginBottom: 4 }}>SMART check</div>
+      {chip("S", S)}{chip("M", M)}{chip("A", A)}{chip("R", R)}{chip("T", T)}
+      <div style={{ fontSize: 11, color: "#6B7280", marginTop: 6 }}>
+        Tip: include who/what, numbers, an action verb, sector/region context, and a time bound.
+      </div>
     </div>
   );
 }

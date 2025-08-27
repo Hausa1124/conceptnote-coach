@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useWizard } from "../context/WizardContext";
 import TextArea from "../components/TextArea";
 import SmartMeter from "../components/SmartMeter";
+import SmartMeter from "../components/SmartMeter";
 
 export default function Step2Problem() {
   const { data, update } = useWizard();
@@ -31,7 +32,7 @@ export default function Step2Problem() {
       <div style={{ fontSize: 12, color: "#6c757d", marginBottom: 8 }}>
         Use SMART. Ex: 'Train 50 lead farmers by Dec; yields +20%.'
       </div>
-      <SmartMeter text={data.objectives} />
+      <SmartMeter text={data.objectives} sector={data.sector} region={data.countryRegion} />
 
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>
         <button onClick={() => nav("/step1")} style={btn}>← Back</button>

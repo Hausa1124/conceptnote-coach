@@ -12,11 +12,17 @@ export default function App() {
   const isResultsPage = location === '/results';
 
   return (
-    <div style={{ 
-      display: isResultsPage ? "block" : "grid", 
-      gridTemplateColumns: isResultsPage ? "1fr" : "minmax(300px, 680px) 1fr", 
-      height: "100vh" 
-    }}>
+    <div
+      style={{
+        display: isResultsPage ? "block" : "grid",
+        gridTemplateColumns: isResultsPage ? "1fr" : "40% 60%",
+        columnGap: 0,
+        height: "100vh",
+        width: "100%",
+        minWidth: 900,
+        overflow: "hidden"
+      }}
+    >
       {isResultsPage ? (
         <Routes>
           <Route path="/results" element={<Results />} />
@@ -24,7 +30,7 @@ export default function App() {
       ) : (
         <>
       {/* Left Pane: Wizard */}
-      <div style={{ padding: 16, borderRight: "1px solid #E5E7EB", overflow: "auto" }}>
+      <div style={{ padding: 16, borderRight: "1px solid #E5E7EB", overflow: "auto", minWidth: 360 }}>
         <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
           <h1 style={{ fontSize: 18, fontWeight: 800 }}>Concept Note Wizard</h1>
           <nav style={{ display: "flex", gap: 8 }}>
@@ -45,7 +51,7 @@ export default function App() {
       </div>
 
       {/* Right Pane: Live Preview */}
-      <div style={{ overflow: "auto", background: "#FAFAFA" }}>
+      <div style={{ overflow: "auto", background: "#FAFAFA", padding: 16, minWidth: 480 }}>
         <LivePreview />
       </div>
         </>
